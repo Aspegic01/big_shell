@@ -56,5 +56,6 @@ typedef struct s_command
 
 t_token	*ft_add_token(t_token **token_list, char *value, token_type type);
 void	check_syntax(char *input);
+t_token	*tokenize(char *input);
 
 #endif

@@ -44,6 +44,6 @@ int main()
 	t_token *tk = NULL;
 	char *l = NULL;
 	ft_readline(l);
-	check_syntax(l);
+	tokenize(l);
 	printf("%s\n", tk->value);
 }

@@ -10,28 +10,36 @@
 #                                                                              #
 # **************************************************************************** #
 
-CC =	cc
-FLAGS =	-Wall -Wextra -Werror -lreadline
+CC = cc
+CFLAGS = -Wall -Wextra -Werror
+LDFLAGS = -lreadline
 NAME = minishell
 
-SRCS =	$(shell ls ./libft/*.c) \
-		$(shell ls ./sources/*.c)
+SRCS = $(shell ls ./sources/*.c)
 OFILES = $(SRCS:.c=.o)
 
-all: $(NAME)
+LIBFT_DIR = ./libft
+LIBFT = $(LIBFT_DIR)/libft.a
+
+all: $(LIBFT) $(NAME)
+
+$(LIBFT):
+	make -C $(LIBFT_DIR)
 
 %.o: %.c
-	$(CC) $(FLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) -c $< -o $@
 
 $(NAME): $(OFILES)
-	$(CC) $(FLAGS) $(OFILES) -o $(NAME)
+	$(CC) $(OFILES) $(LIBFT) $(LDFLAGS) -o $(NAME)
 
 clean:
 	rm -f $(OFILES)
+	make -C $(LIBFT_DIR) clean
 
 fclean: clean
 	rm -f $(NAME)
+	make -C $(LIBFT_DIR) fclean
 
 re: fclean all
 
-.PHONY: all bonus clean fclean
+.PHONY: all clean fclean re
