@@ -45,15 +45,16 @@ typedef struct s_token
 	struct s_token	*next;
 } t_token;
 
-typedef struct s_args
+typedef struct s_command
 {
-	char	**args;
-	token_type	type;
-	int			arg_size;
-	int			heredoc;
-	struct	s_args	*next;
-} t_args;
+	char				*args;
+	token_type			type;
+	int					arg_size;
+	int					heredoc;
+	struct	s_command	*next;
+} t_command;
 
-t_token	*add_token(t_token **token_list, char *value, token_type type);
+t_token	*ft_add_token(t_token **token_list, char *value, token_type type);
+void	check_syntax(char *input);
 
 #endif
