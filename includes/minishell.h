@@ -47,7 +47,7 @@ typedef struct s_token
 
 typedef struct s_command
 {
-	char				*args;
+	char				**args;
 	token_type			type;
 	int					arg_size;
 	int					heredoc;

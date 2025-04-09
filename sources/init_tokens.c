@@ -30,14 +30,19 @@ void	set_type(t_command *head)
 {
 	while (head)
 	{
-		if (head->args[0] && ft_strncmp("|", &head->args[0], 2))
-			head->type = TOKEN_PIPE;
-		else if (head->args[0] && ft_strncmp(">", &head->args[0], 2))
+		if (head->args != NULL)
 		{
-			if (head->args[1] && ft_strncmp(">", &head->args[1], 2))
+			if (ft_strncmp(head->args, "|", 2) == 0)
+				head->type = TOKEN_PIPE;
+			else if (ft_strncmp(head->args, ">>", 3) == 0)
 				head->type = TOKEN_REDIR_APPEND;
-			else 
+			else if (ft_strncmp(head->args, ">", 2) == 0)
 				head->type = TOKEN_REDIR_OUT;
+			else if (ft_strncmp(head->args, "<", 2) == 0)
+				head->type = TOKEN_REDIR_IN;
+			else
+				head->type = TOKEN_WORD;
 		}
+		head = head->next;
 	}
 }
