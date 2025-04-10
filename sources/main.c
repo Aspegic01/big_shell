@@ -17,8 +17,6 @@ char	*ft_readline(char *input)
 	while (1)
 	{
 		input = readline("minishell > ");
-		if (!input)
-			exit(0);
 		add_history(input);
 	}
 	return (input);

@@ -12,6 +12,42 @@
 
 #include "../includes/minishell.h"
 
+char	*read_quoted(char *input, int *i)
+{
+	(void)i;
+	return input;
+}
+
+char	*read_operation(char *input, int *i)
+{
+	(void)i;
+	return input;
+}
+
+char *read_word(const char *str, int *i)
+{
+    int start = *i;
+    while (str[*i] && !ft_whitespace(str[*i]) && !ft_is_operator(str[*i]) && str[*i] != '\'' && str[*i] != '"')
+        (*i)++;
+    return strndup(&str[start], *i - start);
+}
+
+
+token_type	get_operation_type(const char *op)
+{
+	if (ft_strcmp(op, ">") == 0)
+		return (TOKEN_REDIR_OUT);
+	if (ft_strcmp(op , ">>") == 0)
+		return (TOKEN_REDIR_APPEND);
+	if (ft_strcmp(op, "<") == 0)
+		return (TOKEN_REDIR_IN);
+	if (ft_strcmp(op, "<<") == 0)
+		return (TOKEN_HEREDOC);
+	if (ft_strcmp(op, "|") == 0)
+		return (TOKEN_PIPE);
+	return (TOKEN_WORD);
+}
+
 t_token	*tokenize(char *input)
 {
 	t_token	*token_list = NULL;
@@ -23,35 +59,24 @@ t_token	*tokenize(char *input)
 			i++;
 		if (!input[i])
 			break ;
-		if (input[i] == '|')
+		if (input[i] == '\'' || input[i] == '"')
 		{
-			ft_add_token(&token_list, "|", TOKEN_PIPE);
-			i++;
+			char *quoted = read_quoted(input, &i);
+			ft_add_token(&token_list, quoted, TOKEN_WORD);
+			free(quoted);
 		}
-		else if (input[i] == '>')
+		else if (ft_is_operator(input[i]))
 		{
-			if (input[i + 1] == '>')
-			{
-				ft_add_token(&token_list, ">>", TOKEN_REDIR_APPEND);
-				i += 2;
-			}
-			else
-			{
-				ft_add_token(&token_list, ">", TOKEN_REDIR_OUT);
-				i++;
-			}
+			char *op = read_operation(input, &i);
+			token_type type = get_operation_type(op);
+			ft_add_token(&token_list, op, type);
 		}
-		else
+		else if (input[i] != '\0')
 		{
-			int start = i;
-			while (input[i] && input[i] != ' ' && input[i] != '\t' && 
-				input[i] != '|' && input[i] != '<' && input[i] != '>')
-				i++;
-			char *word = ft_substr(input, start, i - start);
+			char *word = read_word(input, &i);
 			ft_add_token(&token_list, word, TOKEN_WORD);
 			free(word);
 		}
 	}
 	return token_list;
 }
-
