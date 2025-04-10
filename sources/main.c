@@ -12,36 +12,49 @@
 
 #include "../includes/minishell.h"
 
-char	*ft_readline(char *input)
+void print_commands(t_command *cmd)
 {
+	int i = 0;
+	while (cmd)
+	{
+		printf("Command:\n");
+		for (i = 0; i < cmd->arg_size; i++)
+			printf("  Arg[%d]: %s\n", i, cmd->args[i]);
+		printf("  Type: %d\n", cmd->type);
+		cmd = cmd->next;
+	}
+}
+
+void print_tokens(t_token *list)
+{
+	while (list)
+	{
+		printf("Token: %-10s | Type: %d\n", list->value, list->type);
+		list = list->next;
+	}
+}
+
+int main(void)
+{
+	char *input;
+
 	while (1)
 	{
-		input = readline("minishell > ");
-		add_history(input);
+		input = readline("minishell$ ");
+		if (!input)
+			break;
+
+		if (*input)
+			add_history(input);
+		t_token *tokens = tokenize(input);
+		if (!check_syntax(tokens))
+			printf("syntax error\n");
+		print_tokens(tokens);
+
+		t_command *commands = build_commands(tokens);
+		print_commands(commands);
+		free(input);
 	}
-	return (input);
-}
 
-void	check_syntax(char *input)
-{
-	t_token *token_list;
-	int		i;
-
-	token_list = NULL;
-	i = 0;
-	while (input[i])
-	{
-		if (input[i] == '|')
-			ft_add_token(&token_list, token_list->value, TOKEN_PIPE);
-		i++;
-	}
-}
-
-int main()
-{
-	t_token *tk = NULL;
-	char *l = NULL;
-	ft_readline(l);
-	tokenize(l);
-	printf("%s\n", tk->value);
+	return 0;
 }

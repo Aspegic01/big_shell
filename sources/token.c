@@ -14,14 +14,23 @@
 
 char	*read_quoted(char *input, int *i)
 {
-	(void)i;
-	return input;
+	char quete = input[*i];
+	int start = ++(*i);
+	while (input[*i] && input[*i] != quete)
+		(*i)++;
+	int len = *i - start;
+	char *res = strndup(&input[start], len);
+	return res;
 }
 
-char	*read_operation(char *input, int *i)
+char *read_operator(const char *str, int *i)
 {
-	(void)i;
-	return input;
+    int start = *i;
+    if ((str[*i] == '>' || str[*i] == '<') && str[*i] == str[*i + 1])
+        *i += 2;
+    else
+        (*i)++;
+    return strndup(&str[start], *i - start);
 }
 
 char *read_word(const char *str, int *i)
@@ -48,7 +57,7 @@ token_type	get_operation_type(const char *op)
 	return (TOKEN_WORD);
 }
 
-t_token	*tokenize(char *input)
+t_token	*tokenize(const char *input)
 {
 	t_token	*token_list = NULL;
 	int	i = 0;
@@ -61,13 +70,13 @@ t_token	*tokenize(char *input)
 			break ;
 		if (input[i] == '\'' || input[i] == '"')
 		{
-			char *quoted = read_quoted(input, &i);
+			char *quoted = read_quoted((char *)input, &i);
 			ft_add_token(&token_list, quoted, TOKEN_WORD);
 			free(quoted);
 		}
 		else if (ft_is_operator(input[i]))
 		{
-			char *op = read_operation(input, &i);
+			char *op = read_operator(input, &i);
 			token_type type = get_operation_type(op);
 			ft_add_token(&token_list, op, type);
 		}

@@ -6,7 +6,7 @@
 /*   By: mlabrirh <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/06 13:49:55 by mlabrirh          #+#    #+#             */
-/*   Updated: 2025/04/06 13:51:08 by mlabrirh         ###   ########.fr       */
+/*   Updated: 2025/04/10 10:14:38 by mlabrirh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,11 @@ typedef struct s_command
 } t_command;
 
 t_token	*ft_add_token(t_token **token_list, char *value, token_type type);
-void	check_syntax(char *input);
-t_token	*tokenize(char *input);
+int	check_syntax(t_token *tokens);
+t_token    *tokenize(const char *line);
+t_command  *build_commands(t_token *tokens);
+void        print_tokens(t_token *list);      // Optional for debug
+void        print_commands(t_command *cmd);   // Optional for debug
+
 
 #endif

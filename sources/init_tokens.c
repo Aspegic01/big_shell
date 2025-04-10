@@ -45,16 +45,19 @@ char	**ft_realloc(char *arg, char **old_arr)
 	return (new_arr);
 }
 
-void	set_size(t_command *head)
+void set_size(t_command *head)
 {
-	int count;
-
 	while (head)
 	{
-		count = 0;
-		while (head->args[count])
-			count++;
-		head->arg_size = count;
+		if (head->args)
+		{
+			int count = 0;
+			while (head->args[count])
+				count++;
+			head->arg_size = count;
+		}
+		else
+			head->arg_size = 0;
 		head = head->next;
 	}
 }
@@ -80,3 +83,34 @@ void	set_type(t_command *head)
 	}
 }
 
+t_command *build_commands(t_token *tokens)
+{
+	t_command *head = NULL;
+	t_command *current = NULL;
+
+	while (tokens)
+	{
+		t_command *cmd = malloc(sizeof(t_command));
+		cmd->args = NULL;
+		cmd->arg_size = 0;
+		cmd->type = TOKEN_WORD;
+		cmd->next = NULL;
+		while (tokens && tokens->type != TOKEN_PIPE)
+		{
+			cmd->args = ft_realloc(tokens->value, cmd->args);
+			tokens = tokens->next;
+		}
+
+		if (!head)
+			head = cmd;
+		else
+			current->next = cmd;
+		current = cmd;
+
+		if (tokens && tokens->type == TOKEN_PIPE)
+			tokens = tokens->next;
+	}
+	set_size(head);
+	set_type(head);
+	return head;
+}
