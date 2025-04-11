@@ -56,4 +56,25 @@ typedef struct s_args
 
 t_token	*add_token(t_token **token_list, char *value, token_type type);
 
+
+// exec part
+
+typedef struct s_env
+{
+	char	*var_name;
+	char	*var_value;
+	int		exported;
+	s_env	*next;
+	s_env	*prev;
+} t_env;
+// init env in a stack
+t_env	*init_env(char	**env);
+void	add_node(t_env **env_list, t_env *new_n);
+t_env	*new_node(char **variable);
+
+// implementation of the builtins
+void	ft_echo(char *arg);
+int	ft_cd(char *arg);
+void	ft_pwd();
+
 #endif
