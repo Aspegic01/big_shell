@@ -12,10 +12,32 @@
 
 #include "../includes/minishell.h"
 
+const char *token_to_string(token_type type)
+{
+	if (type == TOKEN_PIPE)
+		return "|";
+	if (type == TOKEN_REDIR_IN)
+		return "<";
+	if (type == TOKEN_REDIR_OUT)
+		return ">";
+	if (type == TOKEN_REDIR_APPEND)
+		return ">>";
+	if (type == TOKEN_HEREDOC)
+		return "<<";
+	return "unknown";
+}
+
 int	check_syntax(t_token *tokens)
 {
 	t_token *prev = NULL;
 
+	if (!tokens)
+		return (1);
+	if (tokens->type == TOKEN_PIPE)
+	{
+		fprintf(stderr, "minishell: syntax error near unexpected token `|'\n");
+		return (0);
+	}
 	while (tokens)
 	{
 		if (tokens->type == TOKEN_PIPE)
@@ -34,14 +56,20 @@ int	check_syntax(t_token *tokens)
 		else if (tokens->type == TOKEN_REDIR_IN || tokens->type == TOKEN_REDIR_OUT
 			|| tokens->type == TOKEN_REDIR_APPEND || tokens->type == TOKEN_HEREDOC)
 		{
-			if (!tokens->next || tokens->next->type != TOKEN_WORD)
+			if (!tokens->next || tokens->next->type == TOKEN_PIPE
+				|| tokens->next->type == TOKEN_REDIR_IN || tokens->next->type == TOKEN_REDIR_OUT
+				|| tokens->next->type == TOKEN_REDIR_APPEND || tokens->next->type == TOKEN_HEREDOC)
 			{
-				fprintf(stderr, "minishell: syntax error near unexpected token `newline'\n");
+				if (!tokens->next)
+					fprintf(stderr, "minishell: syntax error near unexpected token `newline'\n");
+				else
+					fprintf(stderr, "minishell: syntax error near unexpected token `%s'\n",
+						token_to_string(tokens->next->type));
 				return (0);
 			}
 		}
 		prev = tokens;
 		tokens = tokens->next;
 	}
-	return (1);
+	return 1;
 }
