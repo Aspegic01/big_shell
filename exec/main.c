@@ -34,5 +34,7 @@ int	main(int ac, char **av, char **env)
 			ft_cd(rl);
 		if (strncmp(rl, "pwd", 3) == 0)
 			ft_pwd();
+		if (strcmp("env", rl) == 0)
+			ft_env(env_list);
 	}
 }

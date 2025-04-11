@@ -64,8 +64,8 @@ typedef struct s_env
 	char	*var_name;
 	char	*var_value;
 	int		exported;
-	s_env	*next;
-	s_env	*prev;
+	struct s_env	*next;
+	struct s_env	*prev;
 } t_env;
 // init env in a stack
 t_env	*init_env(char	**env);
@@ -76,5 +76,6 @@ t_env	*new_node(char **variable);
 void	ft_echo(char *arg);
 int	ft_cd(char *arg);
 void	ft_pwd();
+void	ft_env(t_env *env_list);
 
 #endif

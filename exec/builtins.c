@@ -12,8 +12,6 @@
 
 #include "../includes/minishell.h"
 
-
-
 int	ft_cd(char *arg)
 {
 	char	current_dir[1024];
@@ -78,4 +76,16 @@ void	ft_pwd()
 
 	getcwd(current_dir, sizeof(current_dir));
 	printf("%s\n", current_dir);
+}
+
+void	ft_env(t_env *env_list)
+{
+	t_env	*tmp;
+
+	tmp = env_list;
+	while (tmp)
+	{
+		printf("%s=%s\n", tmp->var_name, tmp->var_value);
+		tmp = tmp->next;
+	}
 }
