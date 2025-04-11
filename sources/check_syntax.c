@@ -38,10 +38,7 @@ int check_syntax(t_token *tokens)
         if (tokens->type == TOKEN_PIPE)
         {
             if (!prev || !tokens->next || tokens->next->type == TOKEN_PIPE)
-            {
-                fprintf(stderr, "minishell: syntax error near unexpected token `|'\n");
                 return (0);
-            }
         }
         else if (tokens->type == TOKEN_REDIR_IN || tokens->type == TOKEN_REDIR_OUT ||
                  tokens->type == TOKEN_REDIR_APPEND || tokens->type == TOKEN_HEREDOC)
@@ -49,11 +46,7 @@ int check_syntax(t_token *tokens)
             if (!tokens->next || tokens->next->type == TOKEN_PIPE ||
                 tokens->next->type == TOKEN_REDIR_IN || tokens->next->type == TOKEN_REDIR_OUT ||
                 tokens->next->type == TOKEN_REDIR_APPEND || tokens->next->type == TOKEN_HEREDOC)
-            {
-                fprintf(stderr, "minishell: syntax error near unexpected token `%s'\n",
-                        tokens->next ? token_to_string(tokens->next->type) : "newline");
                 return (0);
-            }
         }
         prev = tokens;
         tokens = tokens->next;

@@ -15,7 +15,8 @@ CFLAGS = -Wall -Wextra -Werror
 LDFLAGS = -lreadline
 NAME = minishell
 
-SRCS = $(shell ls ./sources/*.c)
+SRCS = $(shell ls ./sources/*.c) \
+	   $(shell ls ./exec/*.c)
 OFILES = $(SRCS:.c=.o)
 
 LIBFT_DIR = ./libft

@@ -6,7 +6,7 @@
 /*   By: mlabrirh <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/06 13:49:55 by mlabrirh          #+#    #+#             */
-/*   Updated: 2025/04/10 10:14:38 by mlabrirh         ###   ########.fr       */
+/*   Updated: 2025/04/11 13:13:03 by mlabrirh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,10 +54,26 @@ typedef struct s_command
 	struct	s_command	*next;
 } t_command;
 
+// exec part
+
+typedef struct s_env
+{
+	char	*var_name;
+	char	*var_value;
+	int		exported;
+	struct s_env	*next;
+	struct s_env	*prev;
+} t_env;
+// init env in a stack
+t_env	*init_env(char	**env);
+void	add_node(t_env **env_list, t_env *new_n);
+t_env	*new_node(char **variable);
+
 t_token	*ft_add_token(t_token **token_list, char *value, token_type type);
 int	check_syntax(t_token *tokens);
 t_token    *tokenize(const char *line);
 t_command  *build_commands(t_token *tokens);
+char *expand_input(char *input, int exit_status, t_env *env_list);
 void        print_tokens(t_token *list);      // Optional for debug
 void        print_commands(t_command *cmd);   // Optional for debug
 
