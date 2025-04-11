@@ -12,17 +12,23 @@
 
 #include "../includes/minishell.h"
 
-char	*read_quoted(char *input, int *i)
+char *read_quoted(char *input, int *i)
 {
-	char quete = input[*i];
-	int start = ++(*i);
-	while (input[*i] && input[*i] != quete)
-		(*i)++;
-	int len = *i - start;
-	char *res = strndup(&input[start], len);
-	return res;
-}
+    char quote = input[*i];
+    int start = ++(*i);
 
+    while (input[*i] && input[*i] != quote)
+        (*i)++;
+    if (input[*i] != quote)
+    {
+        fprintf(stderr, "minishell: syntax error: unclosed quote\n");
+        return NULL;
+    }
+    int len = *i - start;
+    char *res = strndup(&input[start], len);
+    (*i)++;
+    return res;
+}
 char *read_operator(const char *str, int *i)
 {
     int start = *i;

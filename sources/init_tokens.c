@@ -100,7 +100,6 @@ t_command *build_commands(t_token *tokens)
 			cmd->args = ft_realloc(tokens->value, cmd->args);
 			tokens = tokens->next;
 		}
-
 		if (!head)
 			head = cmd;
 		else
