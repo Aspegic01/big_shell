@@ -74,7 +74,7 @@ void	ft_echo(char *arg)
 		printf("\n");
 }
 
-int	main()
+int	main(int ac, char **av, char **env)
 {
 	char	current_dir[1024];
 	while (1)
