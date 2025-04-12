@@ -6,7 +6,7 @@
 /*   By: mlabrirh <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/06 13:49:55 by mlabrirh          #+#    #+#             */
-/*   Updated: 2025/04/11 13:13:03 by mlabrirh         ###   ########.fr       */
+/*   Updated: 2025/04/12 12:26:29 by mlabrirh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,8 @@
 # include <sys/types.h>
 # include <sys/wait.h>
 # include "../libft/libft.h"
+
+
 
 typedef enum
 {
@@ -50,6 +52,7 @@ typedef struct s_command
 	char				**args;
 	token_type			type;
 	int					arg_size;
+
 	int					heredoc;
 	struct	s_command	*next;
 } t_command;
@@ -71,6 +74,10 @@ t_env	*new_node(char **variable);
 
 t_token	*ft_add_token(t_token **token_list, char *value, token_type type);
 int	check_syntax(t_token *tokens);
+bool	is_variable_assignment(const char *str);
+t_env	*find_env_var(t_env *env_list, const char *var_name);
+int	handle_assignment(t_env **env_list, const char *assignment);
+char *get_env_value(t_env *env_list, const char *var_name);
 t_token    *tokenize(const char *line);
 t_command  *build_commands(t_token *tokens);
 char *expand_input(char *input, int exit_status, t_env *env_list);

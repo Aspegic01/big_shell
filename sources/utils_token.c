@@ -20,7 +20,7 @@ t_token	*ft_add_token(t_token **token_list, char *value, token_type type)
 	new_token = malloc(sizeof(t_token));
 	if (!new_token)
 		return (NULL);
-	new_token->value = strdup(value);
+	new_token->value = ft_strdup(value);
 	new_token->type = type;
 	new_token->next = NULL;
 

@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
+#include <unistd.h>
 
 char *read_quoted(char *input, int *i)
 {
@@ -21,11 +22,11 @@ char *read_quoted(char *input, int *i)
         (*i)++;
     if (input[*i] != quote)
     {
-        fprintf(stderr, "minishell: syntax error: unclosed quote\n");
-        return NULL;
+        ft_putstr_fd("minishell: syntax error: unclosed quote\n",STDERR_FILENO);
+        return (NULL);
     }
     int len = *i - start;
-    char *res = strndup(&input[start], len);
+    char *res = ft_strndup(&input[start], len);
     (*i)++;
     return res;
 }
@@ -36,7 +37,7 @@ char *read_operator(const char *str, int *i)
         *i += 2;
     else
         (*i)++;
-    return strndup(&str[start], *i - start);
+    return ft_strndup(&str[start], *i - start);
 }
 
 char *read_word(const char *str, int *i)
@@ -44,7 +45,7 @@ char *read_word(const char *str, int *i)
     int start = *i;
     while (str[*i] && !ft_whitespace(str[*i]) && !ft_is_operator(str[*i]) && str[*i] != '\'' && str[*i] != '"')
         (*i)++;
-    return strndup(&str[start], *i - start);
+    return ft_strndup(&str[start], *i - start);
 }
 
 
