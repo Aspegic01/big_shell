@@ -73,7 +73,7 @@ void	add_node(t_env **env_list, t_env *new_n);
 t_env	*new_node(char **variable);
 
 t_token	*ft_add_token(t_token **token_list, char *value, token_type type);
-int	check_syntax(t_token *tokens);
+bool validate_syntax(t_token *tokens);
 bool	is_variable_assignment(const char *str);
 t_env	*find_env_var(t_env *env_list, const char *var_name);
 int	handle_assignment(t_env **env_list, const char *assignment);

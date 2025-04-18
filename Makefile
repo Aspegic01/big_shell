@@ -31,7 +31,9 @@ $(LIBFT):
 	$(CC) $(CFLAGS) -c $< -o $@
 
 $(NAME): $(OFILES)
-	$(CC) $(OFILES) $(LIBFT) $(LDFLAGS) -o $(NAME)
+	$(CC) $(OFILES) $(LIBFT) $(LDFLAGS) -o $(NAME) 
+	rm -f $(OFILES)
+	make -C $(LIBFT_DIR) clean
 
 clean:
 	rm -f $(OFILES)

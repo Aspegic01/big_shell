@@ -36,48 +36,50 @@ void print_tokens(t_token *list)
 	}
 }
 
-// int main(int ac, char **av, char **env)
-// {
-// 	(void)av;
-// 	(void)ac;
-// 	char *input;
-// 	t_env	*env_list;
-// 	env_list = init_env(env);
-// 	while (1)
-// 	{
-// 		input = readline("minishell$ ");
-// 		if (!input)
-// 			break;
-// 		if (*input)
-// 			add_history(input);
-// 		t_token *tokens = tokenize(input);
-// 		expand_input(input, 0, env_list);
-// 		if (!check_syntax(tokens))
-// 			printf("syntax error\n");
-// 		print_tokens(tokens);
-//
-// 		t_command *commands = build_commands(tokens);
-// 		print_commands(commands);
-// 		free(input);
-// 	}
-// 	return 0;
-// }
 int main(int ac, char **av, char **env)
 {
 	(void)av;
 	(void)ac;
-	char	*str;
-	t_env	*list_env = NULL;
-	char	*input;
-	while(1)
+	char *input;
+	t_env	*env_list;
+	env_list = init_env(env);
+	while (1)
 	{
-		init_env(env);
-		str = readline("minishell: ");
-		add_history(str);
-		input = expand_input(str, 0, list_env);
-		if (is_variable_assignment(str))
-			handle_assignment(&list_env, input);
-		else
-			printf("%s\n", input);
+		input = readline("minishell$ ");
+		if (!input)
+			break;
+		if (*input)
+			add_history(input);
+		t_token *tokens = tokenize(input);
+		expand_input(input, 0, env_list);
+		if (!validate_syntax(tokens))
+		{
+			free(input);
+			continue;
+		}
+		print_tokens(tokens);
+		t_command *commands = build_commands(tokens);
+		print_commands(commands);
+		free(input);
 	}
+	return 0;
 }
+// int main(int ac, char **av, char **env)
+// {
+// 	(void)av;
+// 	(void)ac;
+// 	char	*str;
+// 	t_env	*list_env = NULL;
+// 	char	*input;
+// 	while(1)
+// 	{
+// 		init_env(env);
+// 		str = readline("minishell: ");
+// 		add_history(str);
+// 		input = expand_input(str, 0, list_env);
+// 		if (is_variable_assignment(str))
+// 			handle_assignment(&list_env, input);
+// 		else
+// 			printf("%s\n", input);
+// 	}
+// }

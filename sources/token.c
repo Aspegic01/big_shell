@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
-#include <unistd.h>
 
 char *read_quoted(char *input, int *i)
 {
@@ -30,6 +29,7 @@ char *read_quoted(char *input, int *i)
     (*i)++;
     return res;
 }
+
 char *read_operator(const char *str, int *i)
 {
     int start = *i;
@@ -47,7 +47,6 @@ char *read_word(const char *str, int *i)
         (*i)++;
     return ft_strndup(&str[start], *i - start);
 }
-
 
 token_type	get_operation_type(const char *op)
 {
