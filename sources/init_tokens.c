@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
+#include <stdlib.h>
 
 int	arr_size(char **arr)
 {
@@ -45,13 +46,15 @@ char	**ft_realloc(char *arg, char **old_arr)
 	return (new_arr);
 }
 
-void set_size(t_command *head)
+void	set_size(t_command *head)
 {
+	int	count;
+
 	while (head)
 	{
 		if (head->args)
 		{
-			int count = 0;
+			count = 0;
 			while (head->args[count])
 				count++;
 			head->arg_size = count;
@@ -83,31 +86,46 @@ void	set_type(t_command *head)
 	}
 }
 
+static t_command *create_command(t_token **tokens)
+{
+	t_command *cmd;
+
+	cmd = malloc(sizeof(t_command));
+	if (!cmd)
+		return NULL;
+	cmd->args = NULL;
+	cmd->arg_size = 0;
+	cmd->type = TOKEN_WORD;
+	cmd->next = NULL;
+
+	while (*tokens && (*tokens)->type != TOKEN_PIPE)
+	{
+		cmd->args = ft_realloc((*tokens)->value, cmd->args);
+		*tokens = (*tokens)->next;
+	}
+	if (*tokens && (*tokens)->type == TOKEN_PIPE)
+		*tokens = (*tokens)->next;
+
+	return (cmd);
+}
+
 t_command *build_commands(t_token *tokens)
 {
-	t_command *head = NULL;
-	t_command *current = NULL;
+	t_command *head;
+	t_command *current;
 
+	head = NULL;
+	current = NULL;
 	while (tokens)
 	{
-		t_command *cmd = malloc(sizeof(t_command));
-		cmd->args = NULL;
-		cmd->arg_size = 0;
-		cmd->type = TOKEN_WORD;
-		cmd->next = NULL;
-		while (tokens && tokens->type != TOKEN_PIPE)
-		{
-			cmd->args = ft_realloc(tokens->value, cmd->args);
-			tokens = tokens->next;
-		}
+		t_command *cmd = create_command(&tokens);
+		if (!cmd)
+			break;
 		if (!head)
 			head = cmd;
 		else
 			current->next = cmd;
 		current = cmd;
-
-		if (tokens && tokens->type == TOKEN_PIPE)
-			tokens = tokens->next;
 	}
 	set_size(head);
 	set_type(head);

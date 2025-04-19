@@ -66,43 +66,49 @@ static char *expand_tilde(char *input)
 	return (ft_strdup(input));
 }
 
-static char *expand_env_vars(char *input, int exit_status, t_env *env_list)
+static void	ft_exit_status(int exit_status, char **result, char **start)
 {
-	char	*result;
-	char	*start;
 	char	*exit_code;
+
+	exit_code = ft_itoa(exit_status);
+	*result = strjoin_and_free(*result, exit_code);
+	free(exit_code);
+	*start += 2;
+}
+
+static void	ft_env_vars(t_env *env_list, char **result, char **start)
+{
 	char	*var_name;
 	char	*var_value;
 	char	*var_start;
+
+	var_start = ++(*start);
+	while (is_valid_var_char(**start, *start == var_start))
+		(*start)++;
+	var_name = ft_strndup(var_start, *start - var_start);
+	var_value = get_env_value(env_list, var_name);
+	if (var_value)
+		*result = strjoin_and_free(*result, var_value);
+	free(var_name);
+}
+
+char *expand_env_vars(char *input, int exit_status, t_env *env_list)
+{
+	char	*result;
+	char	*start;
 	char	temp[2];
 
 	if (handle_assignment(&env_list, input))
-		return input;
+		return ft_strdup(input);
 	start  = input;
 	result = ft_strdup("");
 	while (*start)
 	{
-		if (*start == '$' && (is_valid_var_char(*(start+1), true) || *(start+1) == '?'))
-		{
+		if (*start == '$' && (is_valid_var_char(*(start + 1), true) || *(start + 1) == '?'))
 			if (*(start + 1) == '?')
-			{
-				exit_code = ft_itoa(exit_status);
-				result = strjoin_and_free(result, exit_code);
-				free(exit_code);
-				start += 2;
-			}
+				ft_exit_status(exit_status, &result, &start);
 			else
-			{
-				var_start = ++start;
-				while (is_valid_var_char(*start, start == var_start))
-					start++;
-				var_name = ft_strndup(var_start, start - var_start);
-				var_value = get_env_value(env_list, var_name);
-				if (var_value)
-					result = strjoin_and_free(result, var_value);
-				free(var_name);
-			}
-		}
+				ft_env_vars(env_list, &result, &start);
 		else
 		{
 			temp[0] = *start;

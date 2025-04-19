@@ -44,19 +44,12 @@ t_env	*find_env_var(t_env *env_list, const char *var_name)
 	return (NULL);
 }
 
-int	handle_assignment(t_env **env_list, const char *assignment)
+
+int	ft_env_var(t_env **env_list, char **parts)
 {
-	char	**parts;
 	t_env	*existing;
 	t_env	*new;
-	int		result;
-	
-	if (!is_variable_assignment(assignment))
-		return (0);
-	
-	parts = ft_split(assignment, '=');
-	if (!parts)
-		return (0);
+
 	existing = find_env_var(*env_list, parts[0]);
 	if (existing)
 	{
@@ -65,19 +58,28 @@ int	handle_assignment(t_env **env_list, const char *assignment)
 			existing->var_value = ft_strdup(parts[1]);
 		else
 			existing->var_value = NULL;
-		result = 1;
+		return (1);
 	}
-	else
+	else if ((new = new_node(parts)))
 	{
-		new = new_node(parts);
-		if (new)
-		{
 			new->exported = 0;
 			add_node(env_list, new);
-			result = 1;
-		}
-		else
-			result = 0;
+			return (1);
 	}
+	else
+		return (0);
+}
+
+int	handle_assignment(t_env **env_list, const char *assignment)
+{
+	char	**parts;
+	int		result;
+	
+	if (!is_variable_assignment(assignment))
+		return (0);
+	parts = ft_split(assignment, '=');
+	if (!parts)
+		return (0);
+	result = ft_env_var(env_list, parts);
 	return (result);
 }
