@@ -28,6 +28,8 @@
 # include <sys/wait.h>
 # include "../libft/libft.h"
 
+
+
 typedef enum
 {
 	TOKEN_WORD,
@@ -45,17 +47,15 @@ typedef struct s_token
 	struct s_token	*next;
 } t_token;
 
-typedef struct s_args
+typedef struct s_command
 {
-	char	**args;
-	token_type	type;
-	int			arg_size;
-	int			heredoc;
-	struct	s_args	*next;
-} t_args;
+	char				**args;
+	token_type			type;
+	int					arg_size;
 
-t_token	*add_token(t_token **token_list, char *value, token_type type);
-
+	int					heredoc;
+	struct	s_command	*next;
+} t_command;
 
 // exec part
 
@@ -72,10 +72,21 @@ t_env	*init_env(char	**env);
 void	add_node(t_env **env_list, t_env *new_n);
 t_env	*new_node(char **variable);
 
-// implementation of the builtins
-void	ft_echo(char *arg);
-int	ft_cd(char *arg);
-void	ft_pwd();
-void	ft_env(t_env *env_list);
+t_token	*ft_add_token(t_token **token_list, char *value, token_type type);
+bool validate_syntax(t_token *tokens);
+bool	is_variable_assignment(const char *str);
+t_env	*find_env_var(t_env *env_list, const char *var_name);
+int	handle_assignment(t_env **env_list, const char *assignment);
+char *get_env_value(t_env *env_list, const char *var_name);
+t_token    *tokenize(const char *line);
+t_command  *build_commands(t_token *tokens);
+char *expand_input(char *input, int exit_status, t_env *env_list);
+void        print_tokens(t_token *list);
+void        print_commands(t_command *cmd);
+
+
+char	*find_cmd_path(char *full_cmd, char **envp);
+void	clean_up(char *str, char **strs);
+
 
 #endif
