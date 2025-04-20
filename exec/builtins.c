@@ -12,13 +12,12 @@
 
 #include "../includes/minishell.h"
 
-int	ft_cd(char *arg)
+int	ft_cd(char **arg)
 {
 	char	current_dir[1024];
 	char	*path;
-	char	**args = ft_split(arg, ' ');
 
-	if (args[1] == NULL)
+	if (arg[1] == NULL)
 	{
 		path = getenv("HOME");
 		if (path == NULL)
@@ -28,7 +27,7 @@ int	ft_cd(char *arg)
 		}
 	}
 	else
-		path = args[1];
+		path = arg[1];
 	if (getcwd(current_dir, sizeof(current_dir)) == NULL)
 	{
 		perror("minishell: cd: getcwd error");
@@ -42,27 +41,26 @@ int	ft_cd(char *arg)
 	return 0;
 }
 
-void	ft_echo(char *arg)
+void	ft_echo(char **arg)
 {
-	char	**args = ft_split(arg, ' ');
 	int	i = 1;
 	int	print_newline = 1;
-	while (args[i] && args[i][0] == '-' && args[i][1] == 'n')
+	while (arg[i] && arg[i][0] == '-' && arg[i][1] == 'n')
 	{
 		int	j = 2;
-		while (args[i][j] == 'n')
+		while (arg[i][j] == 'n')
 			j++;
-		if (args[i][j] != '\0')
+		if (arg[i][j] != '\0')
 			break;
 		print_newline = 0;
 		i++;
 	}
 	int	first = 1;
-	while (args[i])
+	while (arg[i])
 	{
 		if (!first)
 			printf(" ");
-		printf("%s", args[i]);
+		printf("%s", arg[i]);
 		first = 0;
 		i++;
 	}

@@ -6,7 +6,7 @@
 /*   By: mlabrirh <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/06 13:49:55 by mlabrirh          #+#    #+#             */
-/*   Updated: 2025/04/06 13:51:08 by mlabrirh         ###   ########.fr       */
+/*   Updated: 2025/04/19 14:33:06 by mgamraou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,8 +52,6 @@ typedef struct s_command
 	char				**args;
 	token_type			type;
 	int					arg_size;
-
-	int					heredoc;
 	struct	s_command	*next;
 } t_command;
 
@@ -86,7 +84,14 @@ void        print_commands(t_command *cmd);
 
 
 char	*find_cmd_path(char *full_cmd, char **envp);
+void	exec_cmd(char **args, char **envp);
+void	check_input(t_command *input, t_env *env_list, char **envp);
+void	exec_builtin(char **arg, t_env *env_list);
+int	is_builtin(char *arg);
 void	clean_up(char *str, char **strs);
-
+int	ft_cd(char **arg);
+void	ft_echo(char **arg);
+void	ft_pwd();
+void	ft_env(t_env *env_list);
 
 #endif

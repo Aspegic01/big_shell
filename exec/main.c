@@ -15,6 +15,7 @@
 int	main(int ac, char **av, char **env)
 {
 	t_env	*env_list;
+	t_command	*input;
 
 	env_list = init_env(env);
 	if (!env_list)
@@ -22,19 +23,6 @@ int	main(int ac, char **av, char **env)
 		perror("Environment initialization failed");
 		return (1);
 	}
-	while (1)
-	{
-		char	*rl = readline("minishell:");
-		if (strcmp(rl, "exit") == 0)
-			return (0);
-		add_history(rl);
-		if (strncmp("echo ", rl, 5) == 0)
-			ft_echo(rl);
-		if (strncmp(rl, "cd", 2) == 0)
-			ft_cd(rl);
-		if (strncmp(rl, "pwd", 3) == 0)
-			ft_pwd();
-		if (strcmp("env", rl) == 0)
-			ft_env(env_list);
-	}
+	// input from moad
+	check_input(input, env_list, env);
 }
