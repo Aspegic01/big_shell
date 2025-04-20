@@ -28,7 +28,7 @@ int	is_builtin(char *arg)
 
 void	exec_builtin(char **arg, t_env *env_list)
 {
-	if (strncmp("echo ", arg[0], 5) == 0)
+	if (strncmp("echo ", arg[0], 4) == 0)
 		ft_echo(arg);
 	if (strncmp(arg[0], "cd", 2) == 0)
 		ft_cd(arg);

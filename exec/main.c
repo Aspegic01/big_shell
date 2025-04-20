@@ -15,14 +15,29 @@
 int	main(int ac, char **av, char **env)
 {
 	t_env	*env_list;
-	t_command	*input;
-
+	char	*input;
 	env_list = init_env(env);
 	if (!env_list)
 	{
 		perror("Environment initialization failed");
 		return (1);
 	}
-	// input from moad
-	check_input(input, env_list, env);
+	while (1)
+	{
+		input = readline("minishell$ ");
+		if (!input)
+			break;
+		if (*input)
+			add_history(input);
+		t_token *tokens = tokenize(input);
+		expand_input(input, 0, env_list);
+		if (!validate_syntax(tokens))
+		{
+			free(input);
+			continue;
+		}
+		t_command *commands = build_commands(tokens);
+		check_input(commands, env_list, env);
+		free(input);
+	}
 }
