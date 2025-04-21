@@ -27,36 +27,41 @@ char *strjoin_and_free(char *s1, char *s2)
 	return (result);
 }
 
-char *remove_quotes(char *input)
+static char	*append_unquoted(const char *input, char *result)
 {
-	char	*result;
-	char	*start;
+	int		i;
 	char	quote;
 	char	temp[2];
-
-	result = ft_strdup("");
-	start = input;
+	
+	i = 0;
 	quote = '\0';
-	while (*start)
+	while (input[i])
 	{
-		if ((*start == '\'' || *start == '"') && !quote)
-		{
-			quote = *start;
-			start++;
-		}
-		else if (*start == quote)
+		if ((input[i] == '\'' || input[i] == '"') && !quote)
+			quote = input[i++];
+		else if (input[i] == quote)
 		{
 			quote = '\0';
-			start++;
+			i++;
 		}
 		else
 		{
-			temp[0] = *start;
+			temp[0] = input[i++];
 			temp[1] = '\0';
 			result = strjoin_and_free(result, temp);
-			start++;
 		}
 	}
+	return (result);
+}
+
+char	*remove_quotes(char *input)
+{
+	char	*result;
+
+	result = ft_strdup("");
+	if (!result)
+		return (NULL);
+	result = append_unquoted(input, result);
 	free(input);
 	return (result);
 }
