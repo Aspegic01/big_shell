@@ -11,8 +11,6 @@
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
-#include <readline/history.h>
-#include <readline/readline.h>
 
 void print_commands(t_command *cmd)
 {

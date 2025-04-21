@@ -6,7 +6,7 @@
 /*   By: mlabrirh <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/06 13:49:55 by mlabrirh          #+#    #+#             */
-/*   Updated: 2025/04/12 12:26:29 by mlabrirh         ###   ########.fr       */
+/*   Updated: 2025/04/20 18:17:57 by mlabrirh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,8 +52,6 @@ typedef struct s_command
 	char				**args;
 	token_type			type;
 	int					arg_size;
-
-	int					heredoc;
 	struct	s_command	*next;
 } t_command;
 
@@ -67,22 +65,43 @@ typedef struct s_env
 	struct s_env	*next;
 	struct s_env	*prev;
 } t_env;
+
 // init env in a stack
 t_env	*init_env(char	**env);
 void	add_node(t_env **env_list, t_env *new_n);
 t_env	*new_node(char **variable);
 
-t_token	*ft_add_token(t_token **token_list, char *value, token_type type);
-bool validate_syntax(t_token *tokens);
-bool	is_variable_assignment(const char *str);
+//expander
 t_env	*find_env_var(t_env *env_list, const char *var_name);
-int	handle_assignment(t_env **env_list, const char *assignment);
-char *get_env_value(t_env *env_list, const char *var_name);
-t_token    *tokenize(const char *line);
-t_command  *build_commands(t_token *tokens);
-char *expand_input(char *input, int exit_status, t_env *env_list);
-void        print_tokens(t_token *list);      // Optional for debug
-void        print_commands(t_command *cmd);   // Optional for debug
+char	*strjoin_and_free(char *s1, char *s2);
+char	*expand_env_vars(char *input, int exit_status, t_env *env_list);
+char	*remove_quotes(char *input);
+char	*expand_tilde(char *input);
+char	*get_env_value(t_env *env_list, const char *var_name);
+char	*expand_input(char *input, int exit_status, t_env *env_list);
+
+//tokens
+t_token		*ft_add_token(t_token **token_list, char *value, token_type type);
+t_token		*tokenize(const char *line);
+t_command *build_commands(t_token *tokens);
+t_command	*build_commands(t_token *tokens);
+void	set_size(t_command *head);
+t_command *create_command(t_token **tokens);
+void	set_type(t_command *head);
+char	**ft_realloc(char *arg, char **old_arr);
+char *read_quoted(char *input, int *i);
+char *read_operator(const char *str, int *i);
+char *read_word(const char *str, int *i);
+token_type	get_operation_type(const char *op);
+
+//check syntax
+bool	validate_syntax(t_token *tokens);
+
+//assignment
+bool	is_variable_assignment(const char *str);
+int		handle_assignment(t_env **env_list, const char *assignment);
+void	print_commands(t_command *cmd);   // Optional for debug
+void	print_tokens(t_token *list);      // Optional for debug
 
 
 #endif
