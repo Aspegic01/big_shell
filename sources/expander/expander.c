@@ -12,7 +12,7 @@
 
 #include "../../includes/minishell.h"
 
-char *expand_input(char *input, int exit_status, t_env *env_list)
+char	*expand_input(char *input, int exit_status, t_env *env_list)
 {
 	char	*expanded_tilde;
 	char	*expanded_vars;

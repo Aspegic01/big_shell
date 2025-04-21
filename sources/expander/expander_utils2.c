@@ -12,16 +12,16 @@
 
 #include "../../includes/minishell.h"
 
-char *strjoin_and_free(char *s1, char *s2)
+char	*strjoin_and_free(char *s1, char *s2)
 {
-	char *result;
+	char	*result;
 
 	if (!s1 && !s2)
-		return NULL;
+		return (NULL);
 	if (!s1)
-		return ft_strdup(s2);
+		return (ft_strdup(s2));
 	if (!s2)
-		return s1;    
+		return (s1);
 	result = ft_strjoin(s1, s2);
 	free(s1);
 	return (result);
@@ -32,7 +32,7 @@ static char	*append_unquoted(const char *input, char *result)
 	int		i;
 	char	quote;
 	char	temp[2];
-	
+
 	i = 0;
 	quote = '\0';
 	while (input[i])
@@ -66,7 +66,7 @@ char	*remove_quotes(char *input)
 	return (result);
 }
 
-char *expand_tilde(char *input)
+char	*expand_tilde(char *input)
 {
 	char	*home;
 	char	*expanded;
@@ -81,7 +81,7 @@ char *expand_tilde(char *input)
 				return (ft_strdup(input));
 			strcpy(expanded, home);
 			strcat(expanded, input + 1);
-			return expanded;
+			return (expanded);
 		}
 	}
 	return (ft_strdup(input));

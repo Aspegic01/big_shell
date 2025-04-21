@@ -12,18 +12,17 @@
 
 #include "../../includes/minishell.h"
 
-t_command *create_command(t_token **tokens)
+t_command	*create_command(t_token **tokens)
 {
-	t_command *cmd;
+	t_command	*cmd;
 
 	cmd = malloc(sizeof(t_command));
 	if (!cmd)
-		return NULL;
+		return (NULL);
 	cmd->args = NULL;
 	cmd->arg_size = 0;
 	cmd->type = TOKEN_WORD;
 	cmd->next = NULL;
-
 	while (*tokens && (*tokens)->type != TOKEN_PIPE)
 	{
 		cmd->args = ft_realloc((*tokens)->value, cmd->args);
@@ -31,22 +30,22 @@ t_command *create_command(t_token **tokens)
 	}
 	if (*tokens && (*tokens)->type == TOKEN_PIPE)
 		*tokens = (*tokens)->next;
-
 	return (cmd);
 }
 
-t_command *build_commands(t_token *tokens)
+t_command	*build_commands(t_token *tokens)
 {
-	t_command *head;
-	t_command *current;
+	t_command	*head;
+	t_command	*current;
+	t_command	*cmd;
 
 	head = NULL;
 	current = NULL;
 	while (tokens)
 	{
-		t_command *cmd = create_command(&tokens);
+		cmd = create_command(&tokens);
 		if (!cmd)
-			break;
+			break ;
 		if (!head)
 			head = cmd;
 		else
@@ -55,5 +54,5 @@ t_command *build_commands(t_token *tokens)
 	}
 	set_size(head);
 	set_type(head);
-	return head;
+	return (head);
 }

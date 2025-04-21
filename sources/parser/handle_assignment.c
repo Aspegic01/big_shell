@@ -10,7 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-
 #include "../../includes/minishell.h"
 
 bool	is_variable_assignment(const char *str)
@@ -30,7 +29,6 @@ bool	is_variable_assignment(const char *str)
 	}
 	if (str[i] != '=')
 		return (false);
-
 	return (true);
 }
 
@@ -60,20 +58,24 @@ int	ft_env_var(t_env **env_list, char **parts)
 			existing->var_value = NULL;
 		return (1);
 	}
-	else if ((new = new_node(parts)))
-	{
-		new->exported = 0;
-		add_node(env_list, new);
-		return (1);
-	}
 	else
-	return (0);
+	{
+		new = new_node(parts);
+		if (new)
+		{
+			new->exported = 0;
+			add_node(env_list, new);
+			return (1);
+		}
+		else
+			return (0);
+	}
 }
 
 int	handle_assignment(t_env **env_list, const char *assignment)
 {
 	char	**parts;
-	int	result;
+	int		result;
 
 	if (!is_variable_assignment(assignment))
 		return (0);

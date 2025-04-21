@@ -12,7 +12,7 @@
 
 #include "../../includes/minishell.h"
 
-static void	tokenize_next(const char *input, int *i, t_token **token_list)
+static	void	tokenize_next(const char *input, int *i, t_token **token_list)
 {
 	char		*content;
 	token_type	type;
@@ -41,9 +41,11 @@ static void	tokenize_next(const char *input, int *i, t_token **token_list)
 
 t_token	*tokenize(const char *input)
 {
-	t_token	*token_list = NULL;
-	int		i = 0;
+	t_token	*token_list;
+	int		i;
 
+	token_list = NULL;
+	i = 0;
 	while (input[i])
 	{
 		while (input[i] && ft_whitespace(input[i]))

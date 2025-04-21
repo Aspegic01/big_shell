@@ -23,14 +23,14 @@ char	*get_env_value(t_env *env_list, const char *var_name)
 	return (NULL);
 }
 
-static bool is_valid_var_char(char c, bool first_char)
+static	bool	is_valid_var_char(char c, bool first_char)
 {
 	if (first_char)
 		return (ft_isalpha(c) || c == '_');
 	return (ft_isalnum(c) || c == '_');
 }
 
-static void	ft_exit_status(int exit_status, char **result, char **start)
+static	void	ft_exit_status(int exit_status, char **result, char **start)
 {
 	char	*exit_code;
 
@@ -56,23 +56,24 @@ static void	ft_env_vars(t_env *env_list, char **result, char **start)
 	free(var_name);
 }
 
-char *expand_env_vars(char *input, int exit_status, t_env *env_list)
+char	*expand_env_vars(char *input, int exit_status, t_env *env_list)
 {
 	char	*result;
 	char	*start;
 	char	temp[2];
 
 	if (handle_assignment(&env_list, input))
-		return ft_strdup(input);
-	start  = input;
+		return (ft_strdup(input));
+	start = input;
 	result = ft_strdup("");
 	while (*start)
 	{
-		if (*start == '$' && (is_valid_var_char(*(start + 1), true) || *(start + 1) == '?'))
+		if (*start == '$' && (is_valid_var_char(*(start + 1) \
+			, true) || *(start + 1) == '?'))
 			if (*(start + 1) == '?')
 				ft_exit_status(exit_status, &result, &start);
-			else
-				ft_env_vars(env_list, &result, &start);
+		else
+			ft_env_vars(env_list, &result, &start);
 		else
 		{
 			temp[0] = *start;
