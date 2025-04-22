@@ -6,7 +6,7 @@
 /*   By: mlabrirh <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/06 13:49:55 by mlabrirh          #+#    #+#             */
-/*   Updated: 2025/04/19 14:33:06 by mgamraou         ###   ########.fr       */
+/*   Updated: 2025/04/22 16:15:04 by mgamraou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,5 +93,6 @@ int	ft_cd(char **arg);
 void	ft_echo(char **arg);
 void	ft_pwd();
 void	ft_env(t_env *env_list);
+int	redirect_in(char **args);
 
 #endif
