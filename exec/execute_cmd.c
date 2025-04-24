@@ -54,7 +54,7 @@ int	redirect_in(char **args)
 	return (0);
 }
 
-void	exec_cmd(char **args, char **envp)
+void	exec_cmd(char **args, char **envp, char **o_args)
 {
 	pid_t	pid;
 	char	*cmd_path;
@@ -62,6 +62,7 @@ void	exec_cmd(char **args, char **envp)
 	pid = fork();
 	if (pid == 0)
 	{
+		redirect_in(o_args);
 		cmd_path = find_cmd_path(args[0], envp);
 		handle_exec(cmd_path, args, envp);
 	}

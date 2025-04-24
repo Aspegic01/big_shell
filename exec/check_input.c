@@ -29,10 +29,19 @@ int	is_builtin(char *arg)
 	return (0);
 }
 
-void	exec_builtin(char **arg, t_env *env_list)
+void	exec_builtin(char **arg, t_env *env_list, char **o_args)
 {
 	if (!arg || !arg[0])
 		return ;
+	int saved_stdout = dup(STDOUT_FILENO);
+	int saved_stdin = dup(STDIN_FILENO);
+	if (redirect_in(o_args) != 0) {
+		ft_putstr_fd("minishell: redirection error\n", 2);
+		dup2(saved_stdout, STDOUT_FILENO);  // Restore stdout
+		close(saved_stdout);
+		close(saved_stdin);
+		return;
+	}
 	if (ft_strcmp(arg[0], "echo") == 0)
 		ft_echo(arg);
 	if (ft_strcmp(arg[0], "cd") == 0)
@@ -43,6 +52,10 @@ void	exec_builtin(char **arg, t_env *env_list)
 		ft_env(env_list);
 	if (ft_strcmp("exit", arg[0]) == 0)
 		exit(0);
+	dup2(saved_stdout, STDOUT_FILENO);
+	dup2(saved_stdin, STDIN_FILENO);
+	close(saved_stdout);
+	close(saved_stdin);
 }
 
 char	**get_cmd(char **o_args)
@@ -97,11 +110,10 @@ void	check_input(t_command *input, t_env *env_list, char **envp)
 			tmp = tmp->next;
 			continue;
 		}
-		redirect_in(tmp->args);
 		if (is_builtin(args[0]) == 1)
-			exec_builtin(args, env_list);
+			exec_builtin(args, env_list, input->args);
 		else
-			exec_cmd(args, envp);
+			exec_cmd(args, envp, input->args);
 		tmp = tmp->next;
 	}
 }
