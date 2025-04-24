@@ -94,5 +94,6 @@ void	ft_echo(char **arg);
 void	ft_pwd();
 void	ft_env(t_env *env_list);
 int	redirect_in(char **args);
+char	**upd_env(t_env *env_list);
 
 #endif

@@ -16,6 +16,8 @@ int	main(int ac, char **av, char **env)
 {
 	t_env	*env_list;
 	char	*input;
+	char	**u_env;
+
 	env_list = init_env(env);
 	if (!env_list)
 	{
@@ -37,7 +39,8 @@ int	main(int ac, char **av, char **env)
 			continue;
 		}
 		t_command *commands = build_commands(tokens);
-		check_input(commands, env_list, env);
-		free(input);
+		u_env = upd_env(env_list);
+		check_input(commands, env_list, u_env);
+		clean_up(input, u_env);
 	}
 }
