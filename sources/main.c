@@ -39,6 +39,7 @@ int main(int ac, char **av, char **env)
 	(void)av;
 	(void)ac;
 	char *input;
+	char *expanded_input;
 	t_env	*env_list;
 	env_list = init_env(env);
 	while (1)
@@ -48,17 +49,30 @@ int main(int ac, char **av, char **env)
 			break;
 		if (*input)
 			add_history(input);
-		t_token *tokens = tokenize(input);
-		expand_input(input, 0, env_list);
+		
+		// Expand the input
+		expanded_input = expand_input(input, 0, env_list);
+		free(input); // Free the original input after expansion
+		if (!expanded_input)
+			continue; // Skip if expansion fails
+		
+		// Tokenize the expanded input
+		t_token *tokens = tokenize(expanded_input);
+		free(expanded_input); // Free expanded input after tokenizing
+
 		if (!validate_syntax(tokens))
 		{
-			free(input);
+			// If syntax validation fails, free tokens and continue
+			// Freeing tokens logic should be here if applicable
 			continue;
 		}
+
 		print_tokens(tokens);
 		t_command *commands = build_commands(tokens);
 		print_commands(commands);
-		free(input);
+
+		// Free tokens and commands after use
+		// Freeing logic should be added here
 	}
 	return 0;
 }

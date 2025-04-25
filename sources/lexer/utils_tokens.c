@@ -35,27 +35,23 @@ t_token	*ft_add_token(t_token **token_list, char *value, token_type type)
 	return (new_token);
 }
 
-char	*read_quoted(char *input, int *i)
-{
-	char	quote;
-	int		start;
-	int		len;
-	char	*res;
 
-	quote = input[*i];
-	start = ++(*i);
-	while (input[*i] && input[*i] != quote)
-		(*i)++;
-	if (input[*i] != quote)
-	{
-		ft_putstr_fd("minishell: syntax error:\
-		unclosed quote\n", STDERR_FILENO);
-		return (NULL);
-	}
-	len = *i - start;
-	res = ft_strndup(&input[start], len);
-	(*i)++;
-	return (res);
+char *read_quoted(char *input, int *i)
+{
+    char quote = input[*i];
+    int start = ++(*i);
+
+    while (input[*i] && input[*i] != quote)
+        (*i)++;
+    if (input[*i] != quote)
+    {
+        ft_putstr_fd("minishell: syntax error: unclosed quote\n",STDERR_FILENO);
+        return (NULL);
+    }
+    int len = *i - start;
+    char *res = ft_strndup(&input[start], len);
+    (*i)++;
+    return res;
 }
 
 char	*read_operator(const char *str, int *i)

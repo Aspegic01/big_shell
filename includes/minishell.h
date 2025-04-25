@@ -28,7 +28,12 @@
 # include <sys/wait.h>
 # include "../libft/libft.h"
 
-
+typedef enum e_quote_type
+{
+	QUOTE_NONE,
+	QUOTE_SINGLE,
+	QUOTE_DOUBLE
+} t_quote_type;
 
 typedef enum
 {
@@ -82,14 +87,12 @@ char	*expand_input(char *input, int exit_status, t_env *env_list);
 
 //tokens
 t_token		*ft_add_token(t_token **token_list, char *value, token_type type);
-t_token		*tokenize(const char *line);
-t_command *build_commands(t_token *tokens);
+t_token	*tokenize(const char *input);
 t_command	*build_commands(t_token *tokens);
 void	set_size(t_command *head);
-t_command *create_command(t_token **tokens);
 void	set_type(t_command *head);
-char	**ft_realloc(char *arg, char **old_arr);
 char *read_quoted(char *input, int *i);
+char	**ft_realloc(char *arg, char **old_arr);
 char *read_operator(const char *str, int *i);
 char *read_word(const char *str, int *i);
 token_type	get_operation_type(const char *op);

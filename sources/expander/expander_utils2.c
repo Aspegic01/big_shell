@@ -12,6 +12,17 @@
 
 #include "../../includes/minishell.h"
 
+char	*get_env_value(t_env *env_list, const char *var_name)
+{
+	while (env_list)
+	{
+		if (strcmp(env_list->var_name, var_name) == 0)
+			return (env_list->var_value);
+		env_list = env_list->next;
+	}
+	return (NULL);
+}
+
 char	*strjoin_and_free(char *s1, char *s2)
 {
 	char	*result;

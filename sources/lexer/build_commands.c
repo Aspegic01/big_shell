@@ -12,7 +12,7 @@
 
 #include "../../includes/minishell.h"
 
-t_command	*create_command(t_token **tokens)
+static	t_command	*create_command(t_token **tokens)
 {
 	t_command	*cmd;
 

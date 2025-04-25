@@ -12,25 +12,14 @@
 
 #include "../../includes/minishell.h"
 
-char	*get_env_value(t_env *env_list, const char *var_name)
-{
-	while (env_list)
-	{
-		if (ft_strcmp(env_list->var_name, var_name) == 0)
-			return (env_list->var_value);
-		env_list = env_list->next;
-	}
-	return (NULL);
-}
-
-static	bool	is_valid_var_char(char c, bool first_char)
+static bool is_valid_var_char(char c, bool first_char)
 {
 	if (first_char)
-		return (ft_isalpha(c) || c == '_');
-	return (ft_isalnum(c) || c == '_');
+		return (isalpha(c) || c == '_');
+	return (isalnum(c) || c == '_');
 }
 
-static	void	ft_exit_status(int exit_status, char **result, char **start)
+static	void	handle_exit_status(int exit_status, char **result, const char **start)
 {
 	char	*exit_code;
 
@@ -40,11 +29,11 @@ static	void	ft_exit_status(int exit_status, char **result, char **start)
 	*start += 2;
 }
 
-static void	ft_env_vars(t_env *env_list, char **result, char **start)
+static	void	handle_env_var(t_env *env_list, char **result, const char **start)
 {
-	char	*var_name;
-	char	*var_value;
-	char	*var_start;
+	const char	*var_start;
+	char		*var_name;
+	char		*var_value;
 
 	var_start = ++(*start);
 	while (is_valid_var_char(**start, *start == var_start))
@@ -56,24 +45,45 @@ static void	ft_env_vars(t_env *env_list, char **result, char **start)
 	free(var_name);
 }
 
+bool	ft_in_quote(const char **input)
+{
+	bool	in_single_quote;
+	bool	in_double_quote;
+
+	in_single_quote = false;
+	in_double_quote = false;
+	if (**(input) == '\'' && !in_double_quote)
+	{
+		in_single_quote = !in_single_quote;
+		(*input)++;
+		return (in_single_quote);
+	}
+	else if (**(input) == '"' && !in_single_quote)
+	{
+		in_double_quote = !in_double_quote;
+		(*input)++;
+		return (in_single_quote);
+	}
+	return (false);
+}
+
 char	*expand_env_vars(char *input, int exit_status, t_env *env_list)
 {
-	char	*result;
-	char	*start;
-	char	temp[2];
+	char		*result;
+	const char	*start;
+	char		temp[2];
 
-	if (handle_assignment(&env_list, input))
-		return (ft_strdup(input));
-	start = input;
 	result = ft_strdup("");
+	start = input;
 	while (*start)
 	{
-		if (*start == '$' && (is_valid_var_char(*(start + 1) \
-			, true) || *(start + 1) == '?'))
+		if (!ft_in_quote(&start) && *start == '$' && (is_valid_var_char(*(start + 1), true) || *(start + 1) == '?'))
+		{
 			if (*(start + 1) == '?')
-				ft_exit_status(exit_status, &result, &start);
-		else
-			ft_env_vars(env_list, &result, &start);
+				handle_exit_status(exit_status, &result, &start);
+			else
+				handle_env_var(env_list, &result, &start);
+		}
 		else
 		{
 			temp[0] = *start;

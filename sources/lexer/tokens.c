@@ -14,17 +14,17 @@
 
 static	void	tokenize_next(const char *input, int *i, t_token **token_list)
 {
-	char		*content;
-	token_type	type;
+	char			*content;
+	token_type		type;
 
-	if (input[*i] == '\'' || input[*i] == '"')
-	{
-		content = read_quoted((char *)input, i);
-		if (!content)
-			return ;
-		ft_add_token(token_list, content, TOKEN_WORD);
-		free(content);
-	}
+	if (input[*i] == '\'' || input[*i] == '\"')
+    {
+        content = read_quoted((char *)input, i);
+        if (!content)
+            return;
+        ft_add_token(token_list, content, TOKEN_WORD);
+        free(content);
+    }
 	else if (ft_is_operator(input[*i]))
 	{
 		content = read_operator(input, i);
