@@ -6,7 +6,7 @@
 /*   By: mgamraou <mgamraou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 10:17:15 by mgamraou          #+#    #+#             */
-/*   Updated: 2025/04/22 16:23:13 by mgamraou         ###   ########.fr       */
+/*   Updated: 2025/04/27 15:51:49 by mgamraou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,18 +54,26 @@ int	redirect_in(char **args)
 	return (0);
 }
 
-void	exec_cmd(char **args, char **envp, char **o_args)
+void	exec_cmd(char **args, char **envp, char **o_args, int has_pipe)
 {
 	pid_t	pid;
 	char	*cmd_path;
 
-	pid = fork();
-	if (pid == 0)
+	if (has_pipe == 0)
 	{
-		redirect_in(o_args);
+		pid = fork();
+		if (pid == 0)
+		{
+			redirect_in(o_args);
+			cmd_path = find_cmd_path(args[0], envp);
+			handle_exec(cmd_path, args, envp);
+		}
+		else
+		wait(NULL);
+	}
+	else
+{
 		cmd_path = find_cmd_path(args[0], envp);
 		handle_exec(cmd_path, args, envp);
 	}
-	else
-		wait(NULL);
 }

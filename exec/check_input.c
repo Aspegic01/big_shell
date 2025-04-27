@@ -6,11 +6,23 @@
 /*   By: mgamraou <mgamraou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/19 14:11:27 by mgamraou          #+#    #+#             */
-/*   Updated: 2025/04/22 16:23:16 by mgamraou         ###   ########.fr       */
+/*   Updated: 2025/04/27 15:52:23 by mgamraou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
+
+int	has_pipe(t_command *input)
+{
+	t_command *tmp = input;
+	int res = 0;
+	while (tmp)
+	{
+		tmp = tmp->next;
+		res++;
+	}
+	return (res);
+}
 
 int	is_builtin(char *arg)
 {
@@ -100,20 +112,26 @@ void	check_input(t_command *input, t_env *env_list, char **envp)
 	t_command	*tmp;
 	char	**args;
 
-	tmp = input;
-	while (tmp)
+	if (has_pipe(input) > 1)
+		handle_pipeline(input, env_list, envp);
+	else
 	{
-		args = get_cmd(tmp->args);
-		if (!args)
+		tmp = input;
+		printf("\nno pipe\n");
+		while (tmp)
 		{
-			ft_putstr_fd("minishell: error parsing command\n", 2);
+			args = get_cmd(tmp->args);
+			if (!args)
+			{
+				ft_putstr_fd("minishell: error parsing command\n", 2);
+				tmp = tmp->next;
+				continue;
+			}
+			if (is_builtin(args[0]) == 1)
+				exec_builtin(args, env_list, tmp->args);
+			else
+				exec_cmd(args, envp, tmp->args, 0);
 			tmp = tmp->next;
-			continue;
 		}
-		if (is_builtin(args[0]) == 1)
-			exec_builtin(args, env_list, input->args);
-		else
-			exec_cmd(args, envp, input->args);
-		tmp = tmp->next;
 	}
 }
