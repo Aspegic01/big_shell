@@ -45,39 +45,51 @@ static	void	handle_env_var(t_env *env_list, char **result, const char **start)
 	free(var_name);
 }
 
-bool	ft_in_quote(const char **input)
+char	*process_quote(const char **start, char *quote, char *result)
 {
-	bool	in_single_quote;
-	bool	in_double_quote;
+	char	temp[2];
 
-	in_single_quote = false;
-	in_double_quote = false;
-	if (**(input) == '\'' && !in_double_quote)
+	if ((**start == '"' || **start == '\'') && (!*quote || *quote == **start))
 	{
-		in_single_quote = !in_single_quote;
-		(*input)++;
-		return (in_single_quote);
+		if (*quote == **start)
+			*quote = '\0'; // End the quote
+		else
+			*quote = **start; // Start the quote
+
+		temp[0] = **start;
+		temp[1] = '\0';
+		result = strjoin_and_free(result, temp);
+
+		(*start)++;
 	}
-	else if (**(input) == '"' && !in_single_quote)
-	{
-		in_double_quote = !in_double_quote;
-		(*input)++;
-		return (in_single_quote);
-	}
-	return (false);
+	return result;
+}
+
+
+static char	*append_character_as_is(const char **start, char *result)
+{
+	char	temp[2];
+
+	temp[0] = **start;
+	temp[1] = '\0';
+	result = strjoin_and_free(result, temp);
+	(*start)++;
+	return result;
 }
 
 char	*expand_env_vars(char *input, int exit_status, t_env *env_list)
 {
 	char		*result;
 	const char	*start;
-	char		temp[2];
+	char		quote;
 
 	result = ft_strdup("");
 	start = input;
+	quote = '\0';
 	while (*start)
 	{
-		if (!ft_in_quote(&start) && *start == '$' && (is_valid_var_char(*(start + 1), true) || *(start + 1) == '?'))
+		result = process_quote(&start, &quote, result);
+		if (quote != '\'' && *start == '$' && (is_valid_var_char(*(start + 1), true) || *(start + 1) == '?'))
 		{
 			if (*(start + 1) == '?')
 				handle_exit_status(exit_status, &result, &start);
@@ -85,12 +97,7 @@ char	*expand_env_vars(char *input, int exit_status, t_env *env_list)
 				handle_env_var(env_list, &result, &start);
 		}
 		else
-		{
-			temp[0] = *start;
-			temp[1] = '\0';
-			result = strjoin_and_free(result, temp);
-			start++;
-		}
+			result = append_character_as_is(&start, result);
 	}
 	return (result);
 }

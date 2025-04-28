@@ -16,12 +16,10 @@ char	*expand_input(char *input, int exit_status, t_env *env_list)
 {
 	char	*expanded_tilde;
 	char	*expanded_vars;
-	char	*no_quotes;
 
 	if (!input)
 		return (NULL);
 	expanded_tilde = expand_tilde(input);
 	expanded_vars = expand_env_vars(expanded_tilde, exit_status, env_list);
-	no_quotes = remove_quotes(expanded_vars);
-	return (no_quotes);
+	return (expanded_vars);
 }

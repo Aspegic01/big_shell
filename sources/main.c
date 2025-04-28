@@ -30,6 +30,8 @@ void print_tokens(t_token *list)
 	while (list)
 	{
 		printf("Token: %-10s | Type: %d\n", list->value, list->type);
+		if (list->type == TOKEN_PIPE)
+			printf("this is a pip token");
 		list = list->next;
 	}
 }
