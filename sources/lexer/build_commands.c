@@ -19,7 +19,7 @@ void check_and_set_assignment(t_token *token)
         if (token->type == TOKEN_WORD)
         {
             char *equal_sign = strchr(token->value, '=');
-            if (equal_sign)
+            if (equal_sign && equal_sign != token->value)
             {
                 token->type = TOKEN_ASSIGNMENT;
             }
