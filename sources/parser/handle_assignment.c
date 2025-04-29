@@ -12,7 +12,7 @@
 
 #include "../../includes/minishell.h"
 
-bool	is_variable_assignment(const char *str)
+bool	is_variable_assignment(char *str)
 {
 	int	i;
 
@@ -77,7 +77,7 @@ int	handle_assignment(t_env **env_list, const char *assignment)
 	char	**parts;
 	int		result;
 
-	if (!is_variable_assignment(assignment))
+	if (!is_variable_assignment((char *)assignment))
 		return (0);
 	parts = ft_split(assignment, '=');
 	if (!parts)

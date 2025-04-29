@@ -30,8 +30,6 @@ void print_tokens(t_token *list)
 	while (list)
 	{
 		printf("Token: %-10s | Type: %d\n", list->value, list->type);
-		if (list->type == TOKEN_PIPE)
-			printf("this is a pip token");
 		list = list->next;
 	}
 }
@@ -64,13 +62,16 @@ int main(int ac, char **av, char **env)
 
 		if (!validate_syntax(tokens))
 		{
-			// If syntax validation fails, free tokens and continue
-			// Freeing tokens logic should be here if applicable
-			continue;
+			return 0;
 		}
-
-		print_tokens(tokens);
 		t_command *commands = build_commands(tokens);
+		// while(commands)
+		// {
+		// 	if (commands->type == TOKEN_WORD)
+		// 		printf("this token is a pipe\n");
+		// 	commands = commands->next;
+		// }
+		print_tokens(tokens);
 		print_commands(commands);
 
 		// Free tokens and commands after use

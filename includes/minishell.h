@@ -42,7 +42,8 @@ typedef enum
 	TOKEN_REDIR_IN,
 	TOKEN_PIPE,
 	TOKEN_REDIR_APPEND,
-	TOKEN_HEREDOC
+	TOKEN_HEREDOC,
+	TOKEN_ASSIGNMENT
 } token_type;
 
 typedef struct s_token
@@ -71,6 +72,7 @@ typedef struct s_env
 	struct s_env	*prev;
 } t_env;
 
+void check_and_set_assignment(t_token *token);
 // init env in a stack
 t_env	*init_env(char	**env);
 void	add_node(t_env **env_list, t_env *new_n);
@@ -81,6 +83,7 @@ t_env	*find_env_var(t_env *env_list, const char *var_name);
 char	*strjoin_and_free(char *s1, char *s2);
 char	*expand_env_vars(char *input, int exit_status, t_env *env_list);
 char	*remove_quotes(char *input);
+bool	is_variable_assignment(char *str);
 char	*expand_tilde(char *input);
 char	*get_env_value(t_env *env_list, const char *var_name);
 char	*expand_input(char *input, int exit_status, t_env *env_list);
@@ -101,7 +104,6 @@ token_type	get_operation_type(const char *op);
 bool	validate_syntax(t_token *tokens);
 
 //assignment
-bool	is_variable_assignment(const char *str);
 int		handle_assignment(t_env **env_list, const char *assignment);
 void	print_commands(t_command *cmd);   // Optional for debug
 void	print_tokens(t_token *list);      // Optional for debug

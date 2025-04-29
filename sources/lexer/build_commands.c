@@ -12,25 +12,47 @@
 
 #include "../../includes/minishell.h"
 
-static	t_command	*create_command(t_token **tokens)
+void check_and_set_assignment(t_token *token)
 {
-	t_command	*cmd;
+    while (token)
+    {
+        if (token->type == TOKEN_WORD)
+        {
+            char *equal_sign = strchr(token->value, '=');
+            if (equal_sign)
+            {
+                token->type = TOKEN_ASSIGNMENT;
+            }
+        }
+        token = token->next;
+    }
+}
 
-	cmd = malloc(sizeof(t_command));
-	if (!cmd)
-		return (NULL);
-	cmd->args = NULL;
-	cmd->arg_size = 0;
-	cmd->type = TOKEN_WORD;
-	cmd->next = NULL;
-	while (*tokens && (*tokens)->type != TOKEN_PIPE)
-	{
-		cmd->args = ft_realloc((*tokens)->value, cmd->args);
-		*tokens = (*tokens)->next;
-	}
-	if (*tokens && (*tokens)->type == TOKEN_PIPE)
-		*tokens = (*tokens)->next;
-	return (cmd);
+static t_command *create_command(t_token **tokens)
+{
+    t_command *cmd;
+
+    cmd = malloc(sizeof(t_command));
+    if (!cmd)
+        return (NULL);
+    cmd->args = NULL;
+    cmd->arg_size = 0;
+    cmd->type = TOKEN_WORD;
+    cmd->next = NULL;
+    while (*tokens && (*tokens)->type != TOKEN_PIPE)
+    {
+        cmd->args = ft_realloc((*tokens)->value, cmd->args);
+        if (!cmd->args)
+            return (free(cmd), NULL);
+        if ((*tokens)->type == TOKEN_WORD)
+            check_and_set_assignment(*tokens);
+        *tokens = (*tokens)->next;
+    }
+
+    if (*tokens && (*tokens)->type == TOKEN_PIPE)
+        *tokens = (*tokens)->next;
+
+    return cmd;
 }
 
 t_command	*build_commands(t_token *tokens)
