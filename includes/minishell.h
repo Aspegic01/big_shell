@@ -97,5 +97,6 @@ int	redirect_in(char **args);
 char	**upd_env(t_env *env_list);
 void	handle_pipeline(t_command *input, t_env *env_list, char **envp);
 char	**get_cmd(char **o_args);
+void	ft_unset(char **args, t_env **env_list);
 
 #endif
