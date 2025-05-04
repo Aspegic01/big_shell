@@ -72,6 +72,19 @@ typedef struct s_env
 	struct s_env	*prev;
 } t_env;
 
+typedef struct s_var
+{
+	char	*var_name;
+	char	*var_value;
+	struct s_var	*next;
+} t_var;
+
+typedef struct s_shell
+{
+	t_env	*env_list;
+	t_var	*var_list;
+} t_shell;
+
 void check_and_set_assignment(t_token *token);
 // init env in a stack
 t_env	*init_env(char	**env);
@@ -81,12 +94,13 @@ t_env	*new_node(char **variable);
 //expander
 t_env	*find_env_var(t_env *env_list, const char *var_name);
 char	*strjoin_and_free(char *s1, char *s2);
-char	*expand_env_vars(char *input, int exit_status, t_env *env_list);
+char	*expand_env_vars(char *input, int exit_status, t_env *env_list, t_var *vat_list);
 char	*remove_quotes(char *input);
 bool	is_variable_assignment(char *str);
+char	*get_var_list(t_var	*var_list, const char	*var_name);
+char	*expand_input(char *input, int exit_status, t_env *env_list, t_var	*var_list);
 char	*expand_tilde(char *input);
 char	*get_env_value(t_env *env_list, const char *var_name);
-char	*expand_input(char *input, int exit_status, t_env *env_list);
 
 //tokens
 t_token		*ft_add_token(t_token **token_list, char *value, token_type type);
@@ -107,6 +121,25 @@ bool	validate_syntax(t_token *tokens);
 int		handle_assignment(t_env **env_list, const char *assignment);
 void	print_commands(t_command *cmd);   // Optional for debug
 void	print_tokens(t_token *list);      // Optional for debug
+
+//execution part
+char	*find_cmd_path(char *full_cmd, char **envp);
+void	exec_cmd(char **args, char **envp, char **o_args, int has_pipe);
+void	check_input(t_command *input, t_env *env_list, char **envp, t_token *token, t_var **var_list);
+void	exec_builtin(char **arg, t_env *env_list, char **o_args);
+int	is_builtin(char *arg);
+void	clean_up(char *str, char **strs);
+int	ft_cd(char **arg);
+void	ft_echo(char **arg);
+void	ft_pwd();
+void	ft_env(t_env *env_list);
+int	redirect_in(char **args);
+char	**upd_env(t_env *env_list);
+void	handle_pipeline(t_command *input, t_env *env_list, char **envp);
+char	**get_cmd(char **o_args);
+void	ft_unset(char **args, t_env **env_list);
+void	handle_var(t_var **var_list, char *arg);
+
 
 
 #endif

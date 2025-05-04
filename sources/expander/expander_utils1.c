@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
+#include <stdio.h>
 
 static bool is_valid_var_char(char c, bool first_char)
 {
@@ -29,11 +30,12 @@ static	void	handle_exit_status(int exit_status, char **result, const char **star
 	*start += 2;
 }
 
-static	void	handle_env_var(t_env *env_list, char **result, const char **start)
+static	void	handle_env_var(t_env *env_list, char **result, const char **start, t_var *var_list)
 {
 	const char	*var_start;
 	char		*var_name;
 	char		*var_value;
+	char		*value_var;
 
 	var_start = ++(*start);
 	while (is_valid_var_char(**start, *start == var_start))
@@ -42,8 +44,15 @@ static	void	handle_env_var(t_env *env_list, char **result, const char **start)
 	var_value = get_env_value(env_list, var_name);
 	if (var_value)
 		*result = strjoin_and_free(*result, var_value);
+	else
+	{
+		value_var = get_var_list(var_list, var_name);
+		if (value_var)
+			*result = strjoin_and_free(*result, value_var);
+	}
 	free(var_name);
 }
+
 
 char	*process_quote(const char **start, char *quote, char *result)
 {
@@ -77,7 +86,7 @@ static char	*append_character_as_is(const char **start, char *result)
 	return result;
 }
 
-char	*expand_env_vars(char *input, int exit_status, t_env *env_list)
+char	*expand_env_vars(char *input, int exit_status, t_env *env_list, t_var *var_list)
 {
 	char		*result;
 	const char	*start;
@@ -86,6 +95,7 @@ char	*expand_env_vars(char *input, int exit_status, t_env *env_list)
 	result = ft_strdup("");
 	start = input;
 	quote = '\0';
+	(void)env_list;
 	while (*start)
 	{
 		result = process_quote(&start, &quote, result);
@@ -93,8 +103,8 @@ char	*expand_env_vars(char *input, int exit_status, t_env *env_list)
 		{
 			if (*(start + 1) == '?')
 				handle_exit_status(exit_status, &result, &start);
-			else
-				handle_env_var(env_list, &result, &start);
+			else 
+				handle_env_var(env_list, &result, &start, var_list);
 		}
 		else
 			result = append_character_as_is(&start, result);
