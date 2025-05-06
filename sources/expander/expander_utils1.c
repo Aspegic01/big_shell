@@ -95,7 +95,6 @@ char	*expand_env_vars(char *input, int exit_status, t_env *env_list, t_var *var_
 	result = ft_strdup("");
 	start = input;
 	quote = '\0';
-	(void)env_list;
 	while (*start)
 	{
 		result = process_quote(&start, &quote, result);
