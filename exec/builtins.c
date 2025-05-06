@@ -88,7 +88,7 @@ void	ft_env(t_env *env_list)
 	}
 }
 
-static void remove_env_var(t_env **env_list, char *var_name)
+void remove_env_var(t_env **env_list, char *var_name)
 {
 	t_env *current = *env_list;
 
@@ -126,3 +126,4 @@ void	ft_unset(char **args, t_env **env_list)
 	}
 }
 
+void	ft_export()
