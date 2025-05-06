@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
-#include <stdio.h>
 
 static bool is_valid_var_char(char c, bool first_char)
 {
@@ -97,9 +96,9 @@ char	*expand_env_vars(char *input, int exit_status, t_env *env_list, t_var *var_
 	quote = '\0';
 	while (*start)
 	{
-		result = process_quote(&start, &quote, result);
 		if (quote != '\'' && *start == '$' && (is_valid_var_char(*(start + 1), true) || *(start + 1) == '?'))
 		{
+			result = process_quote(&start, &quote, result);
 			if (*(start + 1) == '?')
 				handle_exit_status(exit_status, &result, &start);
 			else 

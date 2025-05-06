@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
+#include <stdio.h>
 
 void print_commands(t_command *cmd)
 {
@@ -41,7 +42,7 @@ int main(int ac, char **av, char **env)
     char *input;
     char *expanded_input;
     t_env    *env_list;
-    char    **u_env;
+	char	**u_env;
     t_var    *var_list;
 
     env_list = init_env(env);
@@ -56,14 +57,13 @@ int main(int ac, char **av, char **env)
         
         // Expand the input
         expanded_input = expand_input(input, 0, env_list, var_list);
+		printf("%s\n", expanded_input);
         free(input); // Free the original input after expansion
         if (!expanded_input)
             continue; // Skip if expansion fails
-        
         // Tokenize the expanded input
         t_token *tokens = tokenize(expanded_input);
         free(expanded_input); // Free expanded input after tokenizing
-
         if (!validate_syntax(tokens))
         {
             return 0;

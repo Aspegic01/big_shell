@@ -18,7 +18,7 @@ NAME = minishell
 SRCS = $(shell ls ./sources/lexer/*.c) \
 	   $(shell ls ./sources/parser/*.c) \
 	   $(shell ls ./sources/expander/*.c) \
-	   $(shell ls ./sources/exec/*.c) \
+	   $(shell ls ./exec/*.c) \
 	   $(shell ls ./sources/main.c)
 OFILES = $(SRCS:.c=.o)
 
