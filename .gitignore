@@ -1,6 +1,3 @@
 *.o
 *.a
 minishell
-Makefile
-./includes/*
-./libft/*
