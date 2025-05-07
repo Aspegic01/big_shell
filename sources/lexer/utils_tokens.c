@@ -35,7 +35,7 @@ t_token	*ft_add_token(t_token **token_list, char *value, token_type type)
 	return (new_token);
 }
 
-char *read_quoted(char *input, int *i)
+char	*read_quoted(char *input, int *i)
 {
 	char	*result = malloc(strlen(input) + 1);
 	int		j = 0;
@@ -59,11 +59,10 @@ char *read_quoted(char *input, int *i)
 				return NULL;
 			}
 		}
-		else if (input[*i] == ' ')
-			(*i)++;
+		else if (input[*i] == ' ' || ft_is_operator(input[*i]))
+			break;
 		else
-			while (input[*i] && input[*i] != '\'' && input[*i] != '\"' && input[*i] != ' ')
-				result[j++] = input[(*i)++];
+			result[j++] = input[(*i)++];
 	}
 	result[j] = '\0';
 	return result;
