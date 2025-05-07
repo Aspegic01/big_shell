@@ -57,7 +57,6 @@ int main(int ac, char **av, char **env)
         
         // Expand the input
         expanded_input = expand_input(input, 0, env_list, var_list);
-		printf("%s\n", expanded_input);
         free(input); // Free the original input after expansion
         if (!expanded_input)
             continue; // Skip if expansion fails
