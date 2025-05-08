@@ -125,5 +125,3 @@ void	ft_unset(char **args, t_env **env_list)
 		i++;
 	}
 }
-
-void	ft_export()
