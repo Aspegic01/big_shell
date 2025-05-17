@@ -231,6 +231,7 @@ void	add_to_env(t_env **env_list, char *arg)
 		/*		free(var_value);*/
 		/*		return ;*/
 		/*	}*/
+			tmp->flag = 0;
 			free(tmp->var_value);
 			free(var_name);
 			tmp->var_value = ft_strdup(var_value);
