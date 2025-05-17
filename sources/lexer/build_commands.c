@@ -50,11 +50,9 @@ static t_command *create_command(t_token **tokens)
             check_and_set_assignment(*tokens);
         *tokens = (*tokens)->next;
     }
-
     if (*tokens && (*tokens)->type == TOKEN_PIPE)
         *tokens = (*tokens)->next;
-
-    return cmd;
+    return (cmd);
 }
 
 t_command	*build_commands(t_token *tokens)

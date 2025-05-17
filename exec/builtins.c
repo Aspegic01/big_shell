@@ -12,11 +12,32 @@
 
 #include "../includes/minishell.h"
 
-int	ft_cd(char **arg)
+void	change_pwd_env(char *old_dir, char *current_dir, t_env **env_list)
+{
+	t_env *current = *env_list;
+	while (current)
+	{
+		if (ft_strcmp(current->var_name, "OLDPWD") == 0)
+		{
+			free(current->var_value);
+			current->var_value = ft_strdup(old_dir);
+		}
+		else if (ft_strcmp(current->var_name, "PWD") == 0)
+		{
+			free(current->var_value);
+			current->var_value = ft_strdup(current_dir);
+		}
+		current = current->next;
+	}
+}
+
+int	ft_cd(char **arg, t_env **env_list)
 {
 	char	current_dir[1024];
+	char	old_dir[1024];
 	char	*path;
 
+	getcwd(old_dir, sizeof(old_dir));
 	if (arg[1] == NULL)
 	{
 		path = getenv("HOME");
@@ -28,16 +49,17 @@ int	ft_cd(char **arg)
 	}
 	else
 		path = arg[1];
-	if (getcwd(current_dir, sizeof(current_dir)) == NULL)
-	{
-		perror("minishell: cd: getcwd error");
-		return 1;
-	}
 	if (chdir(path) != 0)
 	{
 		fprintf(stderr, "minishell: cd: %s: %s\n", path, strerror(errno));
 		return 1;
 	}
+	if (getcwd(current_dir, sizeof(current_dir)) == NULL)
+	{
+		perror("minishell: cd: getcwd error");
+		return 1;
+	}
+	change_pwd_env(old_dir, current_dir, env_list);
 	return 0;
 }
 
@@ -126,3 +148,106 @@ void	ft_unset(char **args, t_env **env_list)
 	}
 }
 
+void	print_export(t_env	*env_list)
+{
+	char	**res;
+	char	*tmp;
+	int		i;
+	int		j;
+	int		count;
+	int		min_index;
+
+	res = upd_env(env_list);
+	count = lstlen(env_list);
+	i = 0;
+	while (i < count - 1)
+	{
+		j = i + 1;
+		min_index = i;
+		while (j < count)
+		{
+			if (ft_strcmp(res[j], res[min_index]) < 0)
+				min_index = j;
+			j++;
+		}
+		if (min_index != i)
+		{
+			tmp = res[i];
+			res[i] = res[min_index];
+			res[min_index] = tmp;
+		}
+		i++;
+	}
+	i = 0;
+	while (i < count)
+	{
+		printf("declare -x %s\n", res[i]);
+		free(res[i]);
+		i++;
+	}
+	free(res);
+}
+
+void	add_to_env(t_env **env_list, char *arg)
+{
+	char	*var_name;
+	char	*var_value;
+	t_env	*new;
+	int		i;
+	int		j;
+	t_env	*tmp;
+
+	i = 0;
+	while (arg[i] != '=' && arg[i])
+		i++;
+	var_name = malloc(sizeof(char) * (i + 1));
+	var_value = ft_strdup(arg + i + 1);
+	j = 0;
+	while (arg[j] != '=' && arg[j])
+	{
+		var_name[j] = arg[j];
+		j++;
+	}
+	var_name[j] = '\0';
+	tmp = *env_list;
+	while (tmp)
+	{
+		if (ft_strcmp(var_name, tmp->var_name) == 0)
+		{
+			if (ft_strcmp(var_value, tmp->var_value) == 0)
+			{
+				free(var_name);
+				free(var_value);
+				return ;
+			}
+			else
+		{
+				free(tmp->var_value);
+				free(var_name);
+				tmp->var_value = ft_strdup(var_value);
+				return ;
+			}
+		}
+		tmp = tmp->next;
+	}
+	new = make_node(var_name, var_value);
+	add_to_list(env_list, new);
+}
+
+void	ft_export(char **args, t_env **env_list)
+{
+	int		i;
+
+	i = 1;
+	if (!args[i])
+		print_export(*env_list);
+	else
+	{
+		while (args[i])
+		{
+			add_to_env(env_list, args[i]);
+			i++;
+		}
+	}
+
+}

@@ -11,47 +11,42 @@
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
-#include <stdlib.h>
 
-// static bool ft_have_a_quote(const char *input, int *i)
-// {
-// 	int j = (*i);
-// 	while(input[j])
-// 	{
-// 		if (input[j] == '\'' || input[j] == '\"')
-// 			return true;
-// 		else if (input[j] == ' ')
-// 			return false;
-// 		j++;
-// 	}
-// 	return false;
-// }
-
-static	void	tokenize_next(const char *input, int *i, t_token **token_list)
+char *read_quoted(char *input, int *i)
 {
-	char			*content;
-	token_type		type;
+	char	quote;
+	int start;
+	char	*content;
 
-	if (input[*i] == '\'' || input[*i] == '\"')
+    quote = input[*i];
+    start = ++(*i);
+    while (input[*i] && input[*i] != quote)
+        (*i)++;
+    if (input[*i] != quote)
+        return NULL;
+    content = strndup(&input[start], *i - start);
+    (*i)++;
+    return content;
+}
+
+static void tokenize_next(const char *input, int *i, t_token **token_list)
+{
+    char *content;
+    token_type type;
+
+    if (ft_is_operator(input[*i]))
     {
-        content = read_quoted((char *)input, i);
-        if (!content)
-            return;
+        content = read_operator(input, i);
+        type = get_operation_type(content);
+        ft_add_token(token_list, content, type);
+        free(content);
+    }
+    else
+    {
+        content = read_word(input, i);
         ft_add_token(token_list, content, TOKEN_WORD);
         free(content);
     }
-	else if (ft_is_operator(input[*i]))
-	{
-		content = read_operator(input, i);
-		type = get_operation_type(content);
-		ft_add_token(token_list, content, type);
-	}
-	else
-	{
-		content = read_word(input, i);
-		ft_add_token(token_list, content, TOKEN_WORD);
-		free(content);
-	}
 }
 
 t_token	*tokenize(const char *input)

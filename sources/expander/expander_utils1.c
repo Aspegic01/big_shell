@@ -80,7 +80,6 @@ char	*expand_env_vars(char *input, int exit_status, t_env *env_list, t_var *var_
 				quote = '\0'; // End the quote
 			else
 				quote = *start; // Start the quote
-
 			temp[0] = *start;
 			temp[1] = '\0';
 			result = strjoin_and_free(result, temp);
