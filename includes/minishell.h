@@ -6,7 +6,7 @@
 /*   By: mlabrirh <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/06 13:49:55 by mlabrirh          #+#    #+#             */
-/*   Updated: 2025/05/03 18:25:47 by mgamraou         ###   ########.fr       */
+/*   Updated: 2025/05/19 14:26:24 by mgamraou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -144,6 +144,7 @@ void	add_to_list(t_env **env_list, t_env *new_n);
 t_env	*make_node(char *var_name, char *var_value, int flag);
 void	ft_export(char **args, t_env **env_list);
 int	lstlen(t_env *lst);
+void	handle_shlvl(t_env **env_list);
 
 
 #endif
