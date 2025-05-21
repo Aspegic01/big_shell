@@ -6,7 +6,7 @@
 /*   By: mlabrirh <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/06 13:49:55 by mlabrirh          #+#    #+#             */
-/*   Updated: 2025/05/19 14:26:24 by mgamraou         ###   ########.fr       */
+/*   Updated: 2025/05/21 10:52:22 by mgamraou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 # include <unistd.h>
 # include <errno.h>
 # include <stdbool.h>
+# include <string.h>
 # include <stdio.h>
 # include <stdlib.h>
 # include <readline/readline.h>
@@ -27,6 +28,8 @@
 # include <sys/types.h>
 # include <sys/wait.h>
 # include "../libft/libft.h"
+
+static volatile sig_atomic_t	g_signal_flag = 0;
 
 typedef enum e_quote_type
 {
@@ -145,6 +148,7 @@ t_env	*make_node(char *var_name, char *var_value, int flag);
 void	ft_export(char **args, t_env **env_list);
 int	lstlen(t_env *lst);
 void	handle_shlvl(t_env **env_list);
+void	setup_signals();
 
 
 #endif
