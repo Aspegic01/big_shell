@@ -55,8 +55,6 @@ int main(int ac, char **av, char **env)
 		input = readline("minishell$ ");
 		if (g_signal_flag == SIGINT)
 		{
-			free(input);
-			continue ;
 		}
 		if (!input)
 		{

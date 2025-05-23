@@ -149,6 +149,7 @@ void	ft_export(char **args, t_env **env_list);
 int	lstlen(t_env *lst);
 void	handle_shlvl(t_env **env_list);
 void	setup_signals();
+void	ignore_signals();
 
 
 #endif

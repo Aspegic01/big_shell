@@ -32,13 +32,17 @@ void	handle_exec(char *path, char **args, char **envp)
 void	exec_cmd(char **args, char **envp, char **o_args, int has_pipe)
 {
 	pid_t	pid;
+	int	status;
 	char	*cmd_path;
 
 	if (has_pipe == 0)
 	{
+		ignore_signals();
 		pid = fork();
 		if (pid == 0)
 		{
+			signal(SIGINT, SIG_DFL);
+			signal(SIGQUIT, SIG_DFL);
 			if (redirect_in(o_args) == 1)
 			{
 				clean_up(NULL, args);
@@ -48,7 +52,8 @@ void	exec_cmd(char **args, char **envp, char **o_args, int has_pipe)
 			handle_exec(cmd_path, args, envp);
 		}
 		else
-		wait(NULL);
+			waitpid(pid, &status, NULL);
+		setup_signals();
 	}
 	else
 {
