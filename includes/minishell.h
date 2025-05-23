@@ -6,7 +6,7 @@
 /*   By: mlabrirh <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/06 13:49:55 by mlabrirh          #+#    #+#             */
-/*   Updated: 2025/05/21 10:52:22 by mgamraou         ###   ########.fr       */
+/*   Updated: 2025/05/23 16:42:54 by mgamraou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,6 +89,12 @@ typedef struct s_shell
 	t_var	*var_list;
 } t_shell;
 
+typedef struct s_pid
+{
+	pid_t	pid;
+	struct s_pid	*next;
+} t_pid;
+
 void check_and_set_assignment(t_token *token);
 // init env in a stack
 t_env	*init_env(char	**env);
@@ -150,6 +156,8 @@ int	lstlen(t_env *lst);
 void	handle_shlvl(t_env **env_list);
 void	setup_signals();
 void	ignore_signals();
+t_pid	*make_pid_node(pid_t pid);
+void	add_pid_node(t_pid **pid_list, t_pid *new_n);
 
 
 #endif

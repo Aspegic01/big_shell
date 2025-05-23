@@ -12,6 +12,7 @@
 
 #include "../includes/minishell.h"
 #include <fcntl.h>
+#include <stdlib.h>
 
 void	handle_exec(char *path, char **args, char **envp)
 {
@@ -32,7 +33,8 @@ void	handle_exec(char *path, char **args, char **envp)
 void	exec_cmd(char **args, char **envp, char **o_args, int has_pipe)
 {
 	pid_t	pid;
-	int	status;
+	int		status;
+	int		exit_s;
 	char	*cmd_path;
 
 	if (has_pipe == 0)
@@ -52,8 +54,18 @@ void	exec_cmd(char **args, char **envp, char **o_args, int has_pipe)
 			handle_exec(cmd_path, args, envp);
 		}
 		else
-			waitpid(pid, &status, NULL);
-		setup_signals();
+	{
+			waitpid(pid, &status, 0);
+			if (WIFEXITED(status))
+				exit_s = WEXITSTATUS(status);
+			else if (WIFSIGNALED(status))
+				g_signal_flag = WTERMSIG(status);
+			setup_signals();
+			if (!exit_s)
+				printf("exit status:%d\n", exit_s);
+			else
+				printf("signal passed:%d\n", g_signal_flag);
+		}
 	}
 	else
 {
