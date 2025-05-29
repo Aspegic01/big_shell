@@ -44,7 +44,9 @@ int main(int ac, char **av, char **env)
 	t_env    *env_list;
 	char	**u_env;
 	t_var    *var_list;
+	int		exit_s;
 
+	exit_s = 0;
 	env_list = init_env(env);
 	var_list = NULL;
 	handle_shlvl(&env_list);
@@ -78,7 +80,8 @@ int main(int ac, char **av, char **env)
 		}
 		t_command *commands = build_commands(tokens);
 		u_env = upd_env(env_list);
-		check_input(commands, &env_list, u_env, tokens, &var_list);
+		check_input(commands, &env_list, u_env, tokens, &var_list, &exit_s);
+		printf("%d\n", exit_s);
 	}
 	return 0;
 }

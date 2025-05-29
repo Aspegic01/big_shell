@@ -134,24 +134,24 @@ void	print_tokens(t_token *list);      // Optional for debug
 
 //execution part
 char	*find_cmd_path(char *full_cmd, char **envp);
-void	exec_cmd(char **args, char **envp, char **o_args, int has_pipe);
-void	check_input(t_command *input, t_env **env_list, char **envp, t_token *token, t_var **var_list);
-void	exec_builtin(char **arg, t_env **env_list, char **o_args);
+void	exec_cmd(char **args, char **envp, char **o_args, int has_pipe, int *exit_s);
+void	check_input(t_command *input, t_env **env_list, char **envp, t_token *token, t_var **var_list, int *exit_s);
+void	exec_builtin(char **arg, t_env **env_list, char **o_args, int *exit_s);
 int	is_builtin(char *arg);
 void	clean_up(char *str, char **strs);
 int	ft_cd(char **arg, t_env **env_list);
-void	ft_echo(char **arg);
-void	ft_pwd();
-void	ft_env(t_env *env_list);
+int	ft_echo(char **arg);
+int	ft_pwd();
+int	ft_env(t_env *env_list);
 int	redirect_in(char **args);
 char	**upd_env(t_env *env_list);
-void	handle_pipeline(t_command *input, t_env **env_list, char **envp);
+void	handle_pipeline(t_command *input, t_env **env_list, char **envp, int *exit_s);
 char	**get_cmd(char **o_args);
-void	ft_unset(char **args, t_env **env_list);
+int	ft_unset(char **args, t_env **env_list);
 void	handle_var(t_var **var_list, char *arg);
 void	add_to_list(t_env **env_list, t_env *new_n);
 t_env	*make_node(char *var_name, char *var_value, int flag);
-void	ft_export(char **args, t_env **env_list);
+int	ft_export(char **args, t_env **env_list);
 int	lstlen(t_env *lst);
 void	handle_shlvl(t_env **env_list);
 void	setup_signals();
