@@ -56,6 +56,8 @@ void	exec_builtin(char **arg, t_env **env_list, char **o_args, int *exit_s)
 		*exit_s = ft_unset(arg, env_list);
 	if (ft_strcmp(arg[0], "export") == 0)
 		*exit_s = ft_export(arg, env_list);
+	clean_up(NULL, arg);
+	clean_up(NULL, o_args);
 	dup2(saved_stdout, STDOUT_FILENO);
 	dup2(saved_stdin, STDIN_FILENO);
 	close(saved_stdout);

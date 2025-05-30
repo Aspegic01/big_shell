@@ -229,6 +229,23 @@ int	add_to_env(t_env **env_list, char *arg)
 	if (arg[j] == '=')
 		flag = 0;
 	var_name[j] = '\0';
+	if (!ft_isalpha(var_name[0]) && var_name[0] != '_')
+	{
+		free(var_name);
+		free(var_value);
+		return (1);
+	}
+	i = 1;
+	while (var_name[i])
+	{
+		if (!ft_isalnum(var_name[i]) && var_name[i] != '_')
+		{
+			free(var_name);
+			free(var_value);
+			return (1);
+		}
+		i++;
+	}
 	tmp = *env_list;
 	while (tmp)
 	{
