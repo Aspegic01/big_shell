@@ -37,7 +37,7 @@ char	**get_cmd(char **o_args)
 	red = 0;
 	while (o_args[i])
 	{
-		if (ft_strcmp(o_args[i], ">") == 0 || ft_strcmp(o_args[i], "<") == 0)
+		if (ft_strcmp(o_args[i], ">") == 0 || ft_strcmp(o_args[i], "<") == 0 || ft_strcmp(o_args[i], ">>") == 0 || ft_strcmp(o_args[i], "<<") == 0)
 			red += 2;
 		i++;
 	}
@@ -48,7 +48,7 @@ char	**get_cmd(char **o_args)
 	j = 0;
 	while (o_args[i])
 	{
-		if ((ft_strcmp(o_args[i], ">") == 0 || ft_strcmp(o_args[i], "<") == 0 || ft_strcmp(o_args[i], ">>") == 0) && o_args[i+1])
+		if ((ft_strcmp(o_args[i], ">") == 0 || ft_strcmp(o_args[i], "<") == 0 || ft_strcmp(o_args[i], ">>") == 0 || ft_strcmp(o_args[i], "<<") == 0) && o_args[i+1])
 			i++;
 		else
 		{
