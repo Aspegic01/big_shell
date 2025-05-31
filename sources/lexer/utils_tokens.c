@@ -113,9 +113,8 @@ static char *handle_quoted_section(const char *str, int *i, char *current_conten
 
     quoted = read_quoted((char *)str, i);
     if (!quoted) {
-        return current_content;
+		return NULL;		/* free and return null if invalid quote */
     }
-
     if (current_content) {
         new_content = ft_strjoin(current_content, quoted);
         free(current_content);
@@ -135,7 +134,6 @@ static char *handle_unquoted_section(const char *str, int *i, int *start, char *
     {
         (*i)++;
     }
-    
     if (*i > *start) {
         return append_content(current_content, &str[*start], *i - *start);
     } else {
@@ -153,10 +151,7 @@ char *read_word(const char *str, int *i)
     {
         if (str[*i] == '\'' || str[*i] == '"')
         {
-            // Handle any unquoted portion before the quote
             content = handle_unquoted_section(str, i, &start, content);
-            
-            // Handle the quoted portion
             content = handle_quoted_section(str, i, content);
             start = *i;
         }
@@ -165,15 +160,11 @@ char *read_word(const char *str, int *i)
             (*i)++;
         }
     }
-
-    // Handle any remaining unquoted portion at the end
     content = handle_unquoted_section(str, i, &start, content);
-
     if (content) {
         return content;
-    } else {
+    } else
         return ft_strdup("");
-    }
 }
 
 token_type	get_operation_type(const char *op)

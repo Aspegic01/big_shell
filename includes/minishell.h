@@ -93,12 +93,15 @@ t_env	*new_node(char **variable);
 
 //expander
 t_env	*find_env_var(t_env *env_list, const char *var_name);
+bool is_valid_var_char(char c, bool first_char);
+void	handle_env_var(t_env *env_list, char **result, const char **start);
+char	*append_character_as_is(const char **start, char *result);
 char	*strjoin_and_free(char *s1, char *s2);
-char	*expand_env_vars(char *input, int exit_status, t_env *env_list, t_var *vat_list);
+char	*expand_env_vars(char *input, int exit_status, t_env *env_list);
 char	*remove_quotes(char *input);
 bool	is_variable_assignment(char *str);
 char	*get_var_list(t_var	*var_list, const char	*var_name);
-char	*expand_input(char *input, int exit_status, t_env *env_list, t_var	*var_list);
+char	*expand_input(char *input, int exit_status, t_env *env_list);
 char	*expand_tilde(char *input);
 char	*get_env_value(t_env *env_list, const char *var_name);
 
@@ -108,7 +111,7 @@ t_token	*tokenize(const char *input);
 t_command	*build_commands(t_token *tokens);
 void	set_size(t_command *head);
 void	set_type(t_command *head);
-char *read_quoted(char *input, int *i);
+char *read_quoted(const char *input, int *i);
 char	**ft_realloc(char *arg, char **old_arr);
 char *read_operator(const char *str, int *i);
 char *read_word(const char *str, int *i);
