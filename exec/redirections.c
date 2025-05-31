@@ -93,16 +93,15 @@ int	redirect_in(char **args)
 		}
 		else if (ft_strcmp(args[i], "<<") == 0)
 		{
+			dup2(out, STDOUT_FILENO);
+			dup2(in, STDIN_FILENO);
 			ft_here_doc(args[i + 1]);
 			i+=2;
-			dup2(out, STDOUT_FILENO);
-			close(out);
-			dup2(in, STDIN_FILENO);
-			close(in);
 		}
 		else
 			i++;
 	}
-
+	close(in);
+	close(out);
 	return (ret);
 }
