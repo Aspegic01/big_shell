@@ -96,7 +96,7 @@ int main(int ac, char **av, char **env)
 		if (*input)
 			add_history(input);
 
-		expanded_input = expand_input(input, 0, env_list);
+		expanded_input = expand_input(input, exit_s, env_list);
 		free(input);
 		if (!expanded_input)
 			continue;
