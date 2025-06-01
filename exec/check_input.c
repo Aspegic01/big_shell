@@ -37,7 +37,7 @@ char	**get_cmd(char **o_args)
 	red = 0;
 	while (o_args[i])
 	{
-		if (ft_strcmp(o_args[i], ">") == 0 || ft_strcmp(o_args[i], "<") == 0)
+		if (ft_strcmp(o_args[i], ">") == 0 || ft_strcmp(o_args[i], "<") == 0 || ft_strcmp(o_args[i], ">>") == 0 || ft_strcmp(o_args[i], "<<") == 0)
 			red += 2;
 		i++;
 	}
@@ -48,7 +48,7 @@ char	**get_cmd(char **o_args)
 	j = 0;
 	while (o_args[i])
 	{
-		if ((ft_strcmp(o_args[i], ">") == 0 || ft_strcmp(o_args[i], "<") == 0 || ft_strcmp(o_args[i], ">>") == 0) && o_args[i+1])
+		if ((ft_strcmp(o_args[i], ">") == 0 || ft_strcmp(o_args[i], "<") == 0 || ft_strcmp(o_args[i], ">>") == 0 || ft_strcmp(o_args[i], "<<") == 0) && o_args[i+1])
 			i++;
 		else
 		{
@@ -61,7 +61,7 @@ char	**get_cmd(char **o_args)
 	return (args);
 }
 
-void	check_input(t_command *input, t_env **env_list, char **envp, t_token *tokens, t_var **var_list)
+int	check_input(t_command *input, t_env **env_list, char **envp, t_token *tokens, t_var **var_list, int *exit_s)
 {
 	t_command	*tmp;
 	t_token	*tmp_t;
@@ -69,7 +69,7 @@ void	check_input(t_command *input, t_env **env_list, char **envp, t_token *token
 
 	(void)var_list;
 	if (has_pipe(input) > 1)
-		handle_pipeline(input, env_list, envp);
+		handle_pipeline(input, env_list, envp, exit_s);
 	else
 	{
 		tmp = input;
@@ -86,11 +86,19 @@ void	check_input(t_command *input, t_env **env_list, char **envp, t_token *token
 			/*if (tmp_t->type == 6)*/
 			/*	handle_var(var_list, tmp->args[0]);*/
 			else if (is_builtin(args[0]) == 1)
-				exec_builtin(args, env_list, tmp->args);
+			{
+				if (exec_builtin(args, env_list, tmp->args, exit_s) == 1)
+				{
+					clean_up(NULL, args);
+					return (1);
+				}
+			}
 			else
-				exec_cmd(args, envp, tmp->args, 0);
+				exec_cmd(args, envp, tmp->args, 0, exit_s, env_list);
+			clean_up(NULL, args);
 			tmp = tmp->next;
 			tmp_t = tmp_t->next;
 		}
 	}
+	return (0);
 }

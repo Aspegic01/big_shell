@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
-#include <stdio.h>
 
 void	free_tokens(t_token *head)
 {
@@ -66,42 +65,76 @@ void print_tokens(t_token *list)
 
 int main(int ac, char **av, char **env)
 {
-    (void)av;
-    (void)ac;
-    char *input;
-    char *expanded_input;
-    t_env    *env_list;
+	(void)av;
+	(void)ac;
+	char *input;
+	char *expanded_input;
+	t_env    *env_list;
 	char	**u_env;
-    t_var    *var_list;
+	t_var    *var_list;
+	int		exit_s;
+	t_token *tokens;
+	t_command *commands;
 
-    env_list = init_env(env);
-    var_list = NULL;
-    while (1)
-    {
-        input = readline("minishell$ ");
-        if (!input)
-            break;
-        if (*input)
-            add_history(input);
-        
-        // Expand the input
-        expanded_input = expand_input(input, 0, env_list);
-        free(input); // Free the original input after expansion
-        if (!expanded_input)
-            continue; // Skip if expansion fails
-        // Tokenize the expanded input
-        t_token *tokens = tokenize(expanded_input);
-		free(expanded_input);
-        if (!validate_syntax(tokens))
-        {
-			free_tokens(tokens);
-			printf("syntax error\n");
+	exit_s = 0;
+	env_list = init_env(env);
+	var_list = NULL;
+	handle_shlvl(&env_list);
+	setup_signals();
+	while (1)
+	{
+		g_signal_flag = 0;
+		input = readline("minishell$ ");
+		if (g_signal_flag == SIGINT)
+		{
+		}
+		if (!input)
+		{
+			write(STDOUT_FILENO, "exit\n", 5);
+			break;
+		}
+		if (*input)
+			add_history(input);
+
+		expanded_input = expand_input(input, 0, env_list);
+		free(input);
+		if (!expanded_input)
 			continue;
-        }
-        t_command *commands = build_commands(tokens);
-        u_env = upd_env(env_list);
-        check_input(commands, &env_list, u_env, tokens, &var_list);
+		tokens = tokenize(expanded_input);
+		free(expanded_input);
+		if (!tokens)
+			continue;
+		if (!validate_syntax(tokens))
+		{
+			free_tokens(tokens);
+			continue;
+		}
+		commands = build_commands(tokens);
+		if (!commands) {
+			free_tokens(tokens);
+			continue;
+		}
+		u_env = upd_env(env_list);
+		if (check_input(commands, &env_list, u_env, tokens, &var_list, &exit_s) == 1)
+		{
+			free_tokens(tokens);
+			free_commands(commands);
+			clean_up(NULL, u_env);
+			break;
+		}
+		// Always free after using
 		free_tokens(tokens);
-    }
-    return 0;
+		free_commands(commands);
+		clean_up(NULL, u_env);
+	}
+	t_env	*env_to_free;
+	while (env_list)
+	{
+		free(env_list->var_value);
+		free(env_list->var_name);
+		env_to_free = env_list;
+		env_list = env_list->next;
+		free(env_to_free);
+	}
+	return 0;
 }
