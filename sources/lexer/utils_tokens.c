@@ -80,68 +80,58 @@ char	*read_operator(const char *str, int *i)
 	return (ft_strndup(&str[start], *i - start));
 }
 
-/* Helper function to append new content to existing content */
 static char *append_content(char *existing, const char *new_content, int len)
 {
     char *tmp;
     char *result;
 
-    if (!new_content || len <= 0) {
+    if (!new_content || len <= 0)
         return existing;
-    }
-
     tmp = ft_strndup(new_content, len);
-    if (!tmp) {
+    if (!tmp)
         return existing;
-    }
-
-    if (existing) {
+    if (existing)
+	{
         result = ft_strjoin(existing, tmp);
         free(existing);
         free(tmp);
         return result;
-    } else {
+	}
+    else
         return tmp;
-    }
 }
 
-/* Helper function to handle quoted sections */
 static char *handle_quoted_section(const char *str, int *i, char *current_content)
 {
     char *quoted;
     char *new_content;
 
     quoted = read_quoted((char *)str, i);
-    if (!quoted) {
-		return NULL;		/* free and return null if invalid quote */
-    }
-    if (current_content) {
+    if (!quoted)
+		return NULL;
+	if (current_content)
+	{
         new_content = ft_strjoin(current_content, quoted);
         free(current_content);
         free(quoted);
         return new_content;
-    } else {
+	}
+	else
         return quoted;
-    }
 }
 
-/* Helper function to handle unquoted sections */
 static char *handle_unquoted_section(const char *str, int *i, int *start, char *current_content)
 {
     while (str[*i] && !ft_whitespace(str[*i]) && 
            !ft_is_operator(str[*i]) && 
            str[*i] != '\'' && str[*i] != '"')
-    {
         (*i)++;
-    }
-    if (*i > *start) {
+    if (*i > *start)
         return append_content(current_content, &str[*start], *i - *start);
-    } else {
+    else
         return current_content;
-    }
 }
 
-/* Main read_word function */
 char *read_word(const char *str, int *i)
 {
     int start = *i;
@@ -156,14 +146,12 @@ char *read_word(const char *str, int *i)
             start = *i;
         }
         else
-        {
             (*i)++;
-        }
     }
     content = handle_unquoted_section(str, i, &start, content);
-    if (content) {
+    if (content)
         return content;
-    } else
+    else
         return ft_strdup("");
 }
 

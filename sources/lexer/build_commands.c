@@ -12,24 +12,6 @@
 
 #include "../../includes/minishell.h"
 
-void check_and_set_assignment(t_token *token)
-{
-	char	*equal_sign;
-
-    while (token)
-    {
-        if (token->type == TOKEN_WORD)
-        {
-            equal_sign = strchr(token->value, '=');
-            if (equal_sign && equal_sign != token->value)
-            {
-                token->type = TOKEN_ASSIGNMENT;
-            }
-        }
-        token = token->next;
-    }
-}
-
 static t_command *create_command(t_token **tokens)
 {
     t_command *cmd;
@@ -46,8 +28,6 @@ static t_command *create_command(t_token **tokens)
         cmd->args = ft_realloc((*tokens)->value, cmd->args);
         if (!cmd->args)
             return (free(cmd), NULL);
-        if ((*tokens)->type == TOKEN_WORD)
-            check_and_set_assignment(*tokens);
         *tokens = (*tokens)->next;
     }
     if (*tokens && (*tokens)->type == TOKEN_PIPE)

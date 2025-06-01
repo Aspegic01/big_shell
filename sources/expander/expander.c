@@ -22,5 +22,6 @@ char	*expand_input(char *input, int exit_status, t_env *env_list)
 		return (NULL);
 	expanded_tilde = expand_tilde(input);
 	expanded_vars =	expand_env_vars(expanded_tilde, exit_status, env_list);
+	free(expanded_tilde);
 	return (expanded_vars);
 }

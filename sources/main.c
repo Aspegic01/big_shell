@@ -13,6 +13,35 @@
 #include "../includes/minishell.h"
 #include <stdio.h>
 
+void	free_tokens(t_token *head)
+{
+	t_token *tmp;
+
+	while (head)
+	{
+		tmp = head->next;
+		if (head->value)
+			free(head->value);
+		free(head);
+		head = tmp;
+	}
+}
+
+void free_commands(t_command *cmd) {
+    t_command *tmp;
+    int i;
+    while (cmd) {
+        tmp = cmd->next;
+        if (cmd->args) {
+            for (i = 0; cmd->args[i]; i++)
+                free(cmd->args[i]);
+            free(cmd->args);
+        }
+        free(cmd);
+        cmd = tmp;
+    }
+}
+
 void print_commands(t_command *cmd)
 {
     int i = 0;
@@ -62,14 +91,17 @@ int main(int ac, char **av, char **env)
             continue; // Skip if expansion fails
         // Tokenize the expanded input
         t_token *tokens = tokenize(expanded_input);
-        free(expanded_input); // Free expanded input after tokenizing
+		free(expanded_input);
         if (!validate_syntax(tokens))
         {
-            return 0;
+			free_tokens(tokens);
+			printf("syntax error\n");
+			continue;
         }
         t_command *commands = build_commands(tokens);
         u_env = upd_env(env_list);
         check_input(commands, &env_list, u_env, tokens, &var_list);
+		free_tokens(tokens);
     }
     return 0;
 }
