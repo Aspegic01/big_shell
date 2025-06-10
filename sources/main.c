@@ -106,6 +106,7 @@ int main(int ac, char **av, char **env)
 			continue;
 		if (!validate_syntax(tokens))
 		{
+			exit_s = 2;
 			free_tokens(tokens);
 			continue;
 		}
@@ -115,15 +116,14 @@ int main(int ac, char **av, char **env)
 			continue;
 		}
 		u_env = upd_env(env_list);
-		if (check_input(commands, &env_list, u_env, tokens, &var_list, &exit_s) == 1)
+		free_tokens(tokens);
+		if (check_input(commands, &env_list, u_env,&var_list, &exit_s) == 1)
 		{
-			free_tokens(tokens);
 			free_commands(commands);
 			clean_up(NULL, u_env);
 			break;
 		}
 		// Always free after using
-		free_tokens(tokens);
 		free_commands(commands);
 		clean_up(NULL, u_env);
 	}

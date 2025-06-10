@@ -18,7 +18,7 @@ void	handle_exec(char *path, char **args, char **envp, t_env **env_list)
 {
 	if (!path)
 	{
-		ft_putstr_fd("command not found\n", 2);
+		ft_putstr_fd(" command not found\n", 2);
 		clean_up(path, args);
 		clean_up(NULL, envp);
 		t_env *tmp;
