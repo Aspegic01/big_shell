@@ -65,24 +65,12 @@ char *expand_env_vars(char *input, int exit_status, t_env *env_list)
 
     while (*start)
     {
-        if ((*start == '~') &&
-            (start == input || isspace(*(start - 1))) &&
-            (start[1] == '/' || start[1] == '\0' || isspace(start[1])))
-		{
-            char *home = getenv("HOME");
-            if (home)
-			{
-                result = strjoin_and_free(result, home);
-                start++;
-                continue;
-            }
-        }
         if ((*start == '"' || *start == '\''))
         {
             if (quote == *start)
-                quote = '\0'; // End quote
+                quote = '\0';
             else if (!quote)
-                quote = *start; // Start quote
+                quote = *start;
             result = append_character_as_is(&start, result);
         }
         else if (quote != '\'' && *start == '$' && (is_valid_var_char(*(start + 1), true) || *(start + 1) == '?'))

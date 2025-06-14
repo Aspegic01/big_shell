@@ -53,6 +53,8 @@ typedef struct s_token
 {
 	char			*value;
 	token_type		type;
+	int is_single_quoted;
+    int is_double_quoted;
 	struct s_token	*next;
 } t_token;
 
@@ -104,6 +106,7 @@ void	free_tokens(t_token *head);
 
 //expander
 t_env	*find_env_var(t_env *env_list, const char *var_name);
+void expand_tokens(t_token *tokens, int exit_status, t_env *env_list);
 char	*strjoin_and_free(char *s1, char *s2);
 char	*expand_env_vars(char *input, int exit_status, t_env *env_list);
 char	*remove_quotes(char *input);
@@ -117,7 +120,7 @@ char	*expand_tilde(char *input);
 char	*get_env_value(t_env *env_list, const char *var_name);
 
 //tokens
-t_token		*ft_add_token(t_token **token_list, char *value, token_type type);
+t_token *ft_add_token(t_token **token_list, char *value, token_type type, int double_quote, int single_qoute);
 t_token	*tokenize(const char *input);
 t_command	*build_commands(t_token *tokens);
 void	set_size(t_command *head);
@@ -125,7 +128,7 @@ void	set_type(t_command *head);
 char *read_quoted(const char *input, int *i);
 char	**ft_realloc(char *arg, char **old_arr);
 char *read_operator(const char *str, int *i);
-char *read_word(const char *str, int *i);
+char *read_word(const char *str, int *i, int *is_single_quoted, int *is_double_quoted);
 token_type	get_operation_type(const char *op);
 
 //check syntax

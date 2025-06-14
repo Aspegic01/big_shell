@@ -68,7 +68,6 @@ int main(int ac, char **av, char **env)
 	(void)av;
 	(void)ac;
 	char *input;
-	char *expanded_input;
 	t_env    *env_list;
 	char	**u_env;
 	t_var    *var_list;
@@ -95,15 +94,9 @@ int main(int ac, char **av, char **env)
 		}
 		if (*input)
 			add_history(input);
-
-		expanded_input = expand_input(input, exit_s, env_list);
+		tokens = tokenize(input);
 		free(input);
-		if (!expanded_input)
-			continue;
-		tokens = tokenize(expanded_input);
-		free(expanded_input);
-		if (!tokens)
-			continue;
+		expand_tokens(tokens, exit_s, env_list);
 		if (!validate_syntax(tokens))
 		{
 			exit_s = 2;
@@ -123,7 +116,6 @@ int main(int ac, char **av, char **env)
 			clean_up(NULL, u_env);
 			break;
 		}
-		// Always free after using
 		free_commands(commands);
 		clean_up(NULL, u_env);
 	}
