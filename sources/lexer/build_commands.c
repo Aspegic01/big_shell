@@ -42,6 +42,12 @@ static t_command *create_command(t_token **tokens)
     cmd->arg_size = 0;
     cmd->type = TOKEN_WORD;
     cmd->next = NULL;
+
+    // 1. Skip leading empty tokens (after expansion)
+    while (*tokens && (*tokens)->type != TOKEN_PIPE && (!(*tokens)->value || !*((*tokens)->value)))
+        *tokens = (*tokens)->next;
+
+    // 2. Add arguments (including possible empty args after the command)
     while (*tokens && (*tokens)->type != TOKEN_PIPE)
     {
         char *arg_dup = ft_strdup((*tokens)->value);
@@ -56,6 +62,7 @@ static t_command *create_command(t_token **tokens)
             return NULL;
         }
         cmd->args = tmp_args;
+        cmd->arg_size++;
         *tokens = (*tokens)->next;
     }
     if (*tokens && (*tokens)->type == TOKEN_PIPE)
