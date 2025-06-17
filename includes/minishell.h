@@ -63,6 +63,7 @@ typedef struct s_command
 	char				**args;
 	token_type			type;
 	int					arg_size;
+	int					flag;
 	struct	s_command	*next;
 } t_command;
 
@@ -97,6 +98,13 @@ typedef struct s_pid
 	struct s_pid	*next;
 } t_pid;
 
+
+typedef struct s_here_docs
+{
+	char	*file_name;
+	struct s_here_docs	*next;
+} t_here_docs;
+
 void check_and_set_assignment(t_token *token);
 // init env in a stack
 t_env	*init_env(char	**env);
@@ -106,9 +114,9 @@ void	free_tokens(t_token *head);
 
 //expander
 t_env	*find_env_var(t_env *env_list, const char *var_name);
-void expand_tokens(t_token *tokens, int exit_status, t_env *env_list);
+void expand_tokens(t_token *tokens, int exit_status, t_env *env_list, t_command *cmd);
 char	*strjoin_and_free(char *s1, char *s2);
-char	*expand_env_vars(char *input, int exit_status, t_env *env_list);
+char	*expand_env_vars(char *input, int exit_status, t_env *env_list, int do_expand);
 char	*remove_quotes(char *input);
 bool	is_variable_assignment(char *str);
 char	*get_var_list(t_var	*var_list, const char	*var_name);
@@ -141,18 +149,19 @@ void	print_tokens(t_token *list);      // Optional for debug
 
 //execution part
 char	*find_cmd_path(char *full_cmd, char **envp);
-void	exec_cmd(char **args, char **envp, char **o_args, int has_pipe, int *exit_s, t_env **env_list);
-int	check_input(t_command *input, t_env **env_list, char **envp,t_var **var_list, int *exit_s);
-int	exec_builtin(char **arg, t_env **env_list, char **o_args, int *exit_s);
+void	exec_cmd(char **args, char **envp, char **o_args, int has_pipe, int *exit_s, t_env **env_list, t_command *input, t_here_docs *here_docs);
+void	exec_piped_cmd(char **args, char **envp, char **o_args, t_env **env_list, t_command *input, t_pid *pid_list, t_here_docs *here_docs);
+int	check_input(t_command *input, t_env **env_list, char **envp, int *exit_s);
+int	exec_builtin(char **arg, t_env **env_list, char **o_args, int *exit_s, t_here_docs *here_docs);
 int	is_builtin(char *arg);
 void	clean_up(char *str, char **strs);
 int	ft_cd(char **arg, t_env **env_list);
 int	ft_echo(char **arg);
 int	ft_pwd();
 int	ft_env(t_env *env_list);
-int	redirect_in(char **args);
+int	redirect_in(char **args, t_env *env_list, t_here_docs *here_docs);
 char	**upd_env(t_env *env_list);
-void	handle_pipeline(t_command *input, t_env **env_list, char **envp, int *exit_s);
+void	handle_pipeline(t_command *input, t_env **env_list, char **envp, int *exit_s, t_here_docs *here_doc);
 char	**get_cmd(char **o_args);
 int	ft_unset(char **args, t_env **env_list);
 void	handle_var(t_var **var_list, char *arg);
@@ -165,6 +174,14 @@ void	setup_signals();
 void	ignore_signals();
 t_pid	*make_pid_node(pid_t pid);
 void	add_pid_node(t_pid **pid_list, t_pid *new_n);
+void free_commands(t_command *cmd);
+char	*expander_heredoc(char	*input, t_env *env_list);
+void	save_fd(int flag);
+t_here_docs	*here_doc(t_command *input, int *exit_s, t_env *env_list, char **env);
+void	free_env(t_env **env_list);
+void	free_pids(t_pid *pid_list);
+void	free_here_docs(t_here_docs *here_docs);
+int	ft_exit(char **arg);
 
 
 #endif

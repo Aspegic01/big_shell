@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
+#include <stdlib.h>
 
 void	free_tokens(t_token *head)
 {
@@ -63,6 +64,24 @@ void print_tokens(t_token *list)
     }
 }
 
+void	save_fd(int flag)
+{
+	static int	out;
+	static int	in;
+
+	if (flag == 1)
+	{
+		out = dup(STDOUT_FILENO);
+		in = dup(STDIN_FILENO);
+	}
+	if (flag == 2)
+	{
+		dup2(out, STDOUT_FILENO);
+		dup2(in, STDIN_FILENO);
+	}
+}
+
+
 int main(int ac, char **av, char **env)
 {
 	(void)av;
@@ -72,8 +91,9 @@ int main(int ac, char **av, char **env)
 	char	**u_env;
 	t_var    *var_list;
 	int		exit_s;
+	int	ret;
 	t_token *tokens;
-	t_command *commands;
+	t_command *commands = malloc(sizeof(t_command));
 
 	exit_s = 0;
 	env_list = init_env(env);
@@ -96,7 +116,7 @@ int main(int ac, char **av, char **env)
 			add_history(input);
 		tokens = tokenize(input);
 		free(input);
-		expand_tokens(tokens, exit_s, env_list);
+		expand_tokens(tokens, exit_s, env_list, commands);
 		if (!validate_syntax(tokens))
 		{
 			exit_s = 2;
@@ -110,11 +130,13 @@ int main(int ac, char **av, char **env)
 		}
 		u_env = upd_env(env_list);
 		free_tokens(tokens);
-		if (check_input(commands, &env_list, u_env,&var_list, &exit_s) == 1)
+		ret = check_input(commands, &env_list, u_env, &exit_s);
+		if (ret != 257)
 		{
 			free_commands(commands);
 			clean_up(NULL, u_env);
-			break;
+			free_env(&env_list);
+			exit(ret);
 		}
 		free_commands(commands);
 		clean_up(NULL, u_env);

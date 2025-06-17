@@ -6,7 +6,7 @@
 /*   By: mgamraou <mgamraou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/26 10:51:42 by mgamraou          #+#    #+#             */
-/*   Updated: 2025/05/23 16:56:11 by mgamraou         ###   ########.fr       */
+/*   Updated: 2025/06/13 11:12:44 by mgamraou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,23 @@ void	handle_pipe_util_b(int *prev_fd, int*fd)
 	(*prev_fd) = fd[0];
 }
 
-void	handle_pipeline(t_command  *input, t_env **env_list, char **envp, int *exit_s)
+int	count_here_docs(char	**cmd)
+{
+	int	i;
+	int	res;
+
+	i = 0;
+	res = 0;
+	while (cmd[i])
+	{
+		if (ft_strcmp(cmd[i], "<<") == 0)
+			res++;
+		i++;
+	}
+	return (res);
+}
+
+void	handle_pipeline(t_command  *input, t_env **env_list, char **envp, int *exit_s, t_here_docs *here_docs)
 {
 	int		fd[2];
 	int		prev_fd;
@@ -46,7 +62,11 @@ void	handle_pipeline(t_command  *input, t_env **env_list, char **envp, int *exit
 	char	**args;
 	t_pid	*pid_list;
 	t_pid	*tmp_n;
+	t_pid	*to_free;
+	int	count;
+	t_here_docs	*here_docs_head;
 
+	here_docs_head = here_docs;
 	prev_fd = -1;
 	tmp = input;
 	pid_list = NULL;
@@ -69,26 +89,47 @@ void	handle_pipeline(t_command  *input, t_env **env_list, char **envp, int *exit
 			{
 				perror("minishell: error parsing command!/n");
 				tmp = tmp->next;
-				continue;
+				clean_up(NULL, args);
+				clean_up(NULL, envp);
+				free_commands(input);
+				free_env(env_list);
+				free_pids(pid_list);
+				if (here_docs_head)
+					free_here_docs(here_docs_head);
+				exit (*exit_s);
 			}
 			if (is_builtin(args[0]) == 1)
-				exec_builtin(args, env_list, tmp->args, exit_s);
+				exec_builtin(args, env_list, tmp->args, exit_s, here_docs);
 			else
-				exec_cmd(args, envp, tmp->args, 1, exit_s, env_list);
+				exec_piped_cmd(args, envp, tmp->args, env_list, input, pid_list, here_docs_head);
+			clean_up(NULL, args);
+			clean_up(NULL, envp);
+			free_commands(input);
+			free_env(env_list);
+			free_pids(pid_list);
+			if (here_docs_head)
+				free_here_docs(here_docs_head);
 			exit(*exit_s);
 		}
 		else
 			handle_pipe_util_b(&prev_fd, fd);
 		tmp_n = make_pid_node(pid);
-		(void)tmp_n;
 		add_pid_node(&pid_list, tmp_n);
+		count = count_here_docs(tmp->args);
+		while (count > 0)
+		{
+			here_docs = here_docs->next;
+			count--;
+		}
 		tmp = tmp->next;
 	}
 	tmp_n = pid_list;
 	while (tmp_n)
 	{
 		waitpid(tmp_n->pid, &status, 0);
+		to_free = tmp_n;
 		tmp_n = tmp_n->next;
+		free(to_free);
 	}
 	if (WIFEXITED(status))
 		*exit_s = WEXITSTATUS(status);

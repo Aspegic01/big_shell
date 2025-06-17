@@ -6,7 +6,7 @@
 /*   By: mgamraou <mgamraou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/29 14:05:26 by mgamraou          #+#    #+#             */
-/*   Updated: 2025/04/29 14:06:21 by mgamraou         ###   ########.fr       */
+/*   Updated: 2025/06/11 11:19:32 by mgamraou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,18 +29,22 @@ int	is_builtin(char *arg)
 	return (0);
 }
 
-int	exec_builtin(char **arg, t_env **env_list, char **o_args, int *exit_s)
+int	exec_builtin(char **arg, t_env **env_list, char **o_args, int *exit_s, t_here_docs *here_docs)
 {
+	int	res;
 	if (!arg || !arg[0])
 		return (0);
 	int saved_stdout = dup(STDOUT_FILENO);
 	int saved_stdin = dup(STDIN_FILENO);
-	if (redirect_in(o_args) == 1) {
+	if (redirect_in(o_args, *env_list, here_docs) == 1) {
 		ft_putstr_fd("minishell: redirection error\n", 2);
-		dup2(saved_stdout, STDOUT_FILENO);  // Restore stdout
+		*exit_s = 1;
+		if (here_docs)
+			free_here_docs(here_docs);
+		dup2(saved_stdout, STDOUT_FILENO);
 		close(saved_stdout);
 		close(saved_stdin);
-		return (0);
+		return (257);
 	}
 	if (ft_strcmp(arg[0], "echo") == 0)
 		*exit_s = ft_echo(arg);
@@ -51,7 +55,13 @@ int	exec_builtin(char **arg, t_env **env_list, char **o_args, int *exit_s)
 	if (ft_strcmp("env", arg[0]) == 0)
 		*exit_s = ft_env(*env_list);
 	if (ft_strcmp("exit", arg[0]) == 0)
-		return (1);
+	{
+		res = ft_exit(arg);
+		if (res == 257)
+			*exit_s = 1;
+		else
+			return (res);
+	}
 	if (ft_strcmp(arg[0], "unset") == 0)
 		*exit_s = ft_unset(arg, env_list);
 	if (ft_strcmp(arg[0], "export") == 0)
@@ -60,5 +70,5 @@ int	exec_builtin(char **arg, t_env **env_list, char **o_args, int *exit_s)
 	dup2(saved_stdin, STDIN_FILENO);
 	close(saved_stdout);
 	close(saved_stdin);
-	return (0);
+	return (257);
 }

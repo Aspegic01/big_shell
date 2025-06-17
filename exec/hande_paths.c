@@ -36,10 +36,7 @@ char	*find_pre_path(char **envp)
 	while (envp[i] && ft_strncmp(envp[i], "PATH=", 5) != 0)
 		i++;
 	if (!envp[i])
-	{
-		perror("cant find path in env!\n");
 		return (NULL);
-	}
 	res = ft_strdup(envp[i] + 5);
 	return (res);
 }
@@ -99,10 +96,13 @@ char	*find_cmd_path(char *full_cmd, char **envp)
 
 	if (!full_cmd || !*full_cmd)
 		return (NULL);
-	if (access(full_cmd, F_OK) == 0)
-		return (ft_strdup(full_cmd));
 	if (full_cmd[0] == '.' || full_cmd[0] == '/')
-		return (NULL);
+	{
+		if (access(full_cmd, F_OK) == 0)
+			return (ft_strdup(full_cmd));
+		else
+			return (NULL);
+	}
 	if (!envp || !envp[0])
 		return (NULL);
 	pre_path = find_pre_path(envp);

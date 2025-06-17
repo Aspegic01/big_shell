@@ -6,7 +6,7 @@
 /*   By: mgamraou <mgamraou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/19 14:11:27 by mgamraou          #+#    #+#             */
-/*   Updated: 2025/05/03 18:27:47 by mgamraou         ###   ########.fr       */
+/*   Updated: 2025/06/12 12:06:06 by mgamraou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,14 +61,41 @@ char	**get_cmd(char **o_args)
 	return (args);
 }
 
-int	check_input(t_command *input, t_env **env_list, char **envp, t_var **var_list, int *exit_s)
+int	has_heredoc(t_command *input)
+{
+	int	i;
+	t_command	*tmp;
+
+	tmp = input;
+	while (tmp)
+	{
+		i = 0;
+		while (tmp->args[i])
+		{
+			if (ft_strcmp(tmp->args[i], "<<") == 0)
+				return (0);
+			i++;
+		}
+		tmp = tmp->next;
+	}
+	return (1);
+}
+
+int	check_input(t_command *input, t_env **env_list, char **envp, int *exit_s)
 {
 	t_command	*tmp;
 	char	**args;
+	t_here_docs	*here_docs;
+	int		ret;
 
-	(void)var_list;
+	here_docs = here_doc(input, exit_s, *env_list, envp);
+	if (has_heredoc(input) == 0 && !here_docs)
+	{
+		free_here_docs(here_docs);
+		return (257);
+	}
 	if (has_pipe(input) > 1)
-		handle_pipeline(input, env_list, envp, exit_s);
+		handle_pipeline(input, env_list, envp, exit_s, here_docs);
 	else
 	{
 		tmp = input;
@@ -81,21 +108,23 @@ int	check_input(t_command *input, t_env **env_list, char **envp, t_var **var_lis
 				tmp = tmp->next;
 				continue;
 			}
-			/*if (tmp_t->type == 6)*/
-			/*	handle_var(var_list, tmp->args[0]);*/
 			else if (is_builtin(args[0]) == 1)
 			{
-				if (exec_builtin(args, env_list, tmp->args, exit_s) == 1)
+				ret = exec_builtin(args, env_list, tmp->args, exit_s, here_docs);
+				if (ret != 257)
 				{
+					free_here_docs(here_docs);
 					clean_up(NULL, args);
-					return (1);
+					return (ret);
 				}
 			}
 			else
-				exec_cmd(args, envp, tmp->args, 0, exit_s, env_list);
+				exec_cmd(args, envp, tmp->args, 0, exit_s, env_list, input, here_docs);
 			clean_up(NULL, args);
 			tmp = tmp->next;
 		}
 	}
-	return (0);
+	if (here_docs)
+		free_here_docs(here_docs);
+	return (257);
 }
