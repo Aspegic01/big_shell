@@ -16,21 +16,24 @@
 void expand_tokens(t_token *tokens, int exit_status, t_env *env_list)
 {
 	t_token *tok;
+	t_token	*prev = NULL;
 	char	*expanded;
 
 	tok = tokens;
     while (tok)
 	{
-        if (tok->type == TOKEN_WORD && !tok->is_single_quoted)
+		if (tok->type == TOKEN_WORD && !tok->is_single_quoted &&
+			!(prev && prev->type == TOKEN_HEREDOC))
 		{
-            expanded = expand_env_vars(tok->value, exit_status, env_list);
+			expanded = expand_env_vars(tok->value, exit_status, env_list);
 			if (!expanded)
 				expanded = ft_strdup("");
-            free(tok->value);
-            tok->value = expanded;
-        }
+			free(tok->value);
+			tok->value = expanded;
+		}
+		prev = tok;
 		tok = tok->next;
-    }
+	}
 }
 
 char	*expand_input(char *input, int exit_status, t_env *env_list)
