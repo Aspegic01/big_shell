@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
+#include <stdio.h>
 #include <stdlib.h>
 
 void	free_tokens(t_token *head)
@@ -93,7 +94,7 @@ int main(int ac, char **av, char **env)
 	int		exit_s;
 	int	ret;
 	t_token *tokens;
-	t_command *commands = malloc(sizeof(t_command));
+	t_command *commands;
 
 	exit_s = 0;
 	env_list = init_env(env);
@@ -115,8 +116,12 @@ int main(int ac, char **av, char **env)
 		if (*input)
 			add_history(input);
 		tokens = tokenize(input);
-		free(input);
-		expand_tokens(tokens, exit_s, env_list, commands);
+		if (!tokens)
+		{
+			continue;
+			free(input);
+		}
+		expand_tokens(tokens, exit_s, env_list);
 		if (!validate_syntax(tokens))
 		{
 			exit_s = 2;

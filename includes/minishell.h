@@ -55,6 +55,7 @@ typedef struct s_token
 	token_type		type;
 	int is_single_quoted;
     int is_double_quoted;
+	int	flag;
 	struct s_token	*next;
 } t_token;
 
@@ -114,8 +115,8 @@ void	free_tokens(t_token *head);
 
 //expander
 t_env	*find_env_var(t_env *env_list, const char *var_name);
-void expand_tokens(t_token *tokens, int exit_status, t_env *env_list, t_command *cmd);
 char	*strjoin_and_free(char *s1, char *s2);
+void expand_tokens(t_token *tokens, int exit_status, t_env *env_list);
 char	*expand_env_vars(char *input, int exit_status, t_env *env_list, int do_expand);
 char	*remove_quotes(char *input);
 bool	is_variable_assignment(char *str);
