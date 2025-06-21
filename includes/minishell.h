@@ -129,7 +129,7 @@ char	*expand_tilde(char *input);
 char	*get_env_value(t_env *env_list, const char *var_name);
 
 //tokens
-t_token *ft_add_token(t_token **token_list, char *value, token_type type, int double_quote, int single_qoute);
+t_token *ft_add_token(t_token **token_list, char *value, token_type type, int *quote);
 t_token	*tokenize(const char *input);
 t_command	*build_commands(t_token *tokens);
 void	set_size(t_command *head);
@@ -137,7 +137,7 @@ void	set_type(t_command *head);
 char *read_quoted(const char *input, int *i);
 char	**ft_realloc(char *arg, char **old_arr);
 char *read_operator(const char *str, int *i);
-char *read_word(const char *str, int *i, int *is_single_quoted, int *is_double_quoted);
+char *read_word(const char *str, int *i, int *quote);
 token_type	get_operation_type(const char *op);
 
 //check syntax

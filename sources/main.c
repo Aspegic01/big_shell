@@ -118,9 +118,10 @@ int main(int ac, char **av, char **env)
 		tokens = tokenize(input);
 		if (!tokens)
 		{
-			continue;
 			free(input);
+			continue;
 		}
+		free(input);
 		expand_tokens(tokens, exit_s, env_list);
 		if (!validate_syntax(tokens))
 		{
